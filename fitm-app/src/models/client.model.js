@@ -1,4 +1,6 @@
-const { regularExpressions } = require("../utils");
+const {
+    regularExpressions
+} = require("../utils");
 
 module.exports = (sequelizeConn, DataTypes) => {
     const Client = sequelizeConn.define("client", {
@@ -12,8 +14,8 @@ module.exports = (sequelizeConn, DataTypes) => {
             allowNull: false,
             validate: {
                 is: {
-                    args: regularExpressions.name.regex,
-                    msg: regularExpressions.name.msg
+                    args: regularExpressions.fullName.regex,
+                    msg: regularExpressions.fullName.msg
                 }
             }
         },
@@ -28,7 +30,7 @@ module.exports = (sequelizeConn, DataTypes) => {
             }
         },
         height: {
-            type: DataTypes.DECIMAL(3,2),
+            type: DataTypes.DECIMAL(3, 2),
             allowNull: false,
             validate: {
                 isDecimal: {
@@ -38,7 +40,7 @@ module.exports = (sequelizeConn, DataTypes) => {
             }
         },
         weight: {
-            type: DataTypes.DECIMAL(6,2),
+            type: DataTypes.DECIMAL(6, 2),
             allowNull: false,
             validate: {
                 isDecimal: {
@@ -66,6 +68,11 @@ module.exports = (sequelizeConn, DataTypes) => {
                 }
             }
         },
+        fitness_goal: {
+            //TODO: Should I leave it as ENUM or move it to separate table?
+            type: DataTypes.ENUM('maintenance', 'weight loss', 'muscle gain'),
+            defaultValue: "maintenance"
+        }
     }, {
         freezeTableName: true
     })
@@ -77,7 +84,7 @@ module.exports = (sequelizeConn, DataTypes) => {
         })
         Client.belongsTo(models.user, {
             foreignKey: {
-                allowNull:false
+                allowNull: false
             },
             onDelete: "cascade",
             onUpdate: "cascade"
@@ -92,7 +99,7 @@ module.exports = (sequelizeConn, DataTypes) => {
         })
         Client.belongsTo(models.client_fitness_level, {
             foreignKey: {
-                allowNull:false
+                allowNull: false
             },
             onDelete: "cascade",
             onUpdate: "cascade"
@@ -105,6 +112,6 @@ module.exports = (sequelizeConn, DataTypes) => {
             onDelete: "cascade",
             onUpdate: "cascade"
         })
-      };
+    };
     return Client
 }

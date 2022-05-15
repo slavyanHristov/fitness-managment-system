@@ -1,4 +1,6 @@
-const { regularExpressions } = require("../utils");
+const {
+    regularExpressions
+} = require("../utils");
 
 module.exports = (sequelizeConn, DataTypes) => {
     const Manager = sequelizeConn.define("manager", {
@@ -12,8 +14,8 @@ module.exports = (sequelizeConn, DataTypes) => {
             allowNull: false,
             validate: {
                 is: {
-                    args: regularExpressions.name.regex,
-                    msg: regularExpressions.name.msg
+                    args: regularExpressions.fullName.regex,
+                    msg: regularExpressions.fullName.msg
                 },
                 len: {
                     args: [4, 45],
@@ -30,11 +32,20 @@ module.exports = (sequelizeConn, DataTypes) => {
             onDelete: "cascade",
             onUpdate: "cascade"
         })
-        Manager.belongsTo(models.user, {
-            foreignKey: {allowNull: false},
+        Manager.hasMany(models.employee, {
+            foreignKey: {
+                allowNull: false
+            },
             onDelete: "cascade",
             onUpdate: "cascade"
         })
-      };
+        Manager.belongsTo(models.user, {
+            foreignKey: {
+                allowNull: false
+            },
+            onDelete: "cascade",
+            onUpdate: "cascade"
+        })
+    };
     return Manager
 }

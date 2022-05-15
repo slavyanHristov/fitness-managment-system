@@ -8,14 +8,10 @@ module.exports = (sequelizeConn, DataTypes) => {
         name: {
             type: DataTypes.STRING(45),
             allowNull: false
-        },
-        price: {
-            type: DataTypes.FLOAT(6),
-            allowNull: false
         }
     }, {
         freezeTableName: true,
-        timestamp: false
+        timestamps: false
     })
 
     MembershipType.associate = (models) => {
@@ -26,6 +22,6 @@ module.exports = (sequelizeConn, DataTypes) => {
             onDelete: "cascade",
             onUpdate: "cascade"
         })
-      };
+    };
     return MembershipType
 }

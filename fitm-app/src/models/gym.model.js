@@ -1,3 +1,7 @@
+const {
+    regularExpressions
+} = require('../utils')
+
 module.exports = (sequelizeConn, DataTypes) => {
     const Gym = sequelizeConn.define("gym", {
         id: {
@@ -7,18 +11,46 @@ module.exports = (sequelizeConn, DataTypes) => {
         },
         name: {
             type: DataTypes.STRING(45),
-            allowNull: false
+            allowNull: false,
+            validate: {
+                is: {
+                    args: regularExpressions.gymName.regex,
+                    msg: regularExpressions.gymName.msg
+                }
+            }
         },
         size: {
-            type: DataTypes.FLOAT(11)
+            type: DataTypes.FLOAT(11),
+            validate: {
+                isDecimal: true
+            }
         },
         open_at: {
             type: DataTypes.TIME,
-            allowNull: false
+            allowNull: false,
+            validate: {
+                is: {
+                    args: regularExpressions.hours_mins_secs.regex,
+                    msg: regularExpressions.hours_mins_secs.msg
+                }
+            }
         },
         closed_at: {
             type: DataTypes.TIME,
-            allowNull: false
+            allowNull: false,
+            validate: {
+                is: {
+                    args: regularExpressions.hours_mins_secs.regex,
+                    msg: regularExpressions.hours_mins_secs.msg
+                }
+            }
+        },
+        monthly_cost: {
+            type: DataTypes.FLOAT(6),
+            allowNull: false,
+            validate: {
+                isDecimal: true
+            }
         },
         description: {
             type: DataTypes.TEXT
@@ -54,6 +86,6 @@ module.exports = (sequelizeConn, DataTypes) => {
             onDelete: "cascade",
             onUpdate: "cascade"
         })
-      };
+    };
     return Gym
 }

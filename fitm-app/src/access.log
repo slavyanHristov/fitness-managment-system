@@ -1,0 +1,8 @@
+::1 - - [15/May/2022:17:57:52 +0000] "POST /api/register/users/manager HTTP/1.1" 200 228 "-" "PostmanRuntime/7.29.0"
+::1 - - [15/May/2022:17:57:54 +0000] "POST /api/register/gym HTTP/1.1" 200 182 "-" "PostmanRuntime/7.29.0"
+::1 - - [15/May/2022:17:57:56 +0000] "POST /api/register/users/instructor HTTP/1.1" 200 195 "-" "PostmanRuntime/7.29.0"
+::1 - - [15/May/2022:17:57:58 +0000] "POST /api/register/users/client HTTP/1.1" 200 226 "-" "PostmanRuntime/7.29.0"
+::1 - - [15/May/2022:17:58:04 +0000] "POST /api/auth/login HTTP/1.1" 200 275 "-" "PostmanRuntime/7.29.0"
+::1 - - [15/May/2022:17:58:18 +0000] "POST /api/client/membership/create HTTP/1.1" 200 180 "-" "PostmanRuntime/7.29.0"
+::1 - - [15/May/2022:17:58:24 +0000] "PATCH /api/client/setInstructor/1 HTTP/1.1" 401 69 "-" "PostmanRuntime/7.29.0"
+::1 - - [15/May/2022:17:58:26 +0000] "PATCH /api/client/setInstructor/1 HTTP/1.1" 200 392 "-" "PostmanRuntime/7.29.0"
