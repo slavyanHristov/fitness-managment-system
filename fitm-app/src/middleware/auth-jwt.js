@@ -8,6 +8,7 @@ const {
 const db = require("../models");
 const User = db.user;
 const Client = db.client;
+const FitnessInstructor = db.fitness_instructor
 
 const {
   TokenExpiredError
@@ -30,7 +31,7 @@ const verifyToken = (req, res, next) => {
   const authHeader = req.headers.authorization;
   const token = authHeader && authHeader.split(" ")[1];
   if (token == null)
-    return res.status(401).json({
+    return res.status(403).json({
       success: false,
       message: "No token has been provided!",
     });
@@ -105,10 +106,30 @@ const isClient = async (req, res, next) => {
   }
 }
 
+const isInstructor = async (req, res, next) => {
+  const instructor = await FitnessInstructor.findOne({
+    where: {
+      userId: req.id
+    },
+  });
+
+  if (!instructor) {
+    return res.status(403).json({
+      success: false,
+      message: "Fitness Instructor Unauthorized!",
+    });
+  } else {
+    console.log(instructor);
+    req.instructorId = instructor.id
+    return next();
+  }
+}
+
 const authJwt = {
   verifyToken: verifyToken,
   isAdmin: isAdmin,
   isManager: isManager,
-  isClient: isClient
+  isClient: isClient,
+  isInstructor: isInstructor
 };
 module.exports = authJwt;

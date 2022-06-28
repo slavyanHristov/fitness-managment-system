@@ -1,4 +1,13 @@
 const db = require("../models")
+// const nodemailer = require('nodemailer')
+// const sgMail = require("@sendgrid/mail")
+// const {
+//     SENDGRID_API_KEY,
+//     EMAIL
+// } = require("../../config/config")
+const {
+    mailSender
+} = require('../utils')
 const User = db.user
 const Gym = db.gym
 const Manager = db.manager
@@ -163,10 +172,11 @@ exports.updateGym = async (req, res) => {
 
 // -------------- Get All Managers --------------
 exports.getAllManagers = async (req, res) => {
-    const allManagers = await Manager.findAll({
-        include: managerInnerJoins
-    })
+
     try {
+        const allManagers = await Manager.findAll({
+            include: managerInnerJoins
+        })
         if (!allManagers) {
             return res.status(404).json({
                 success: false,
@@ -215,4 +225,61 @@ exports.getOneManager = async (req, res) => {
         })
     }
 
+}
+
+exports.sendMailManager = async (req, res) => {
+    const {
+        sender,
+        recipient,
+        subject,
+        tempPassword
+    } = req.body
+
+    const msg = {
+        from: `"Fit-M Staff" <${sender}>`, // sender address
+        to: `${recipient}`, // list of receivers
+        subject: `${subject}`, // Subject line
+        text: `You've been hired! First Login Password: ${tempPassword}`, // plain text body
+        html: "<b>You've been hired!</b>", // html body
+    }
+
+    await mailSender.sendMailEthereal(msg)
+
+    res.status(200).json({
+        success: true,
+        message: "Message has been sent!"
+    })
+
+}
+
+exports.sendMail = async (req, res) => {
+    const {
+        recipient,
+        subjectMsg,
+        text
+    } = req.body
+
+    sgMail.setApiKey(SENDGRID_API_KEY)
+    try {
+        const msg = {
+            to: `${recipient}`,
+            from: `${EMAIL}`,
+            subject: `${subjectMsg}`,
+            text: `${text}`,
+            html: '<strong>Hello there!</strong>'
+        };
+        const info = await sgMail.send(msg)
+        return res.status(200).json({
+            success: true,
+            message: "Message has been sent!",
+            info
+        })
+
+    } catch (err) {
+        return res.status(500).json({
+            success: false,
+            message: "Oops. Internal Error!",
+            error: err.response.body
+        })
+    }
 }

@@ -7,12 +7,19 @@
     "preview": "vite preview --port 5050"
   },
   "dependencies": {
+    "@vuelidate/core": "^2.0.0-alpha.41",
+    "@vuelidate/validators": "^2.0.0-alpha.29",
+    "@vueuse/core": "^8.7.4",
+    "axios": "^0.27.2",
     "pinia": "^2.0.13",
     "vue": "^3.2.33",
     "vue-router": "^4.0.14"
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^2.3.1",
+    "autoprefixer": "^10.4.7",
+    "postcss": "^8.4.14",
+    "tailwindcss": "^3.0.24",
     "vite": "^2.9.5"
   }
 }

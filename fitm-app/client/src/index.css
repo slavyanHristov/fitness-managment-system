@@ -1,0 +1,50 @@
+@import url("https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,700;0,800;1,700;1,800&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Inter&display=swap");
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer components {
+  .router-views {
+    @apply py-2 transition-all uppercase block md:p-4 hover:text-primaryBlue;
+  }
+  .hamburger-spans {
+    @apply block w-6 h-1 mb-1 transition-all relative bg-primaryDark dark:bg-primaryWhite rounded-md z-10;
+  }
+  .darkMode-colors {
+    @apply dark:bg-accentDark dark:text-primaryWhite;
+  }
+  .lightMode-colors {
+    @apply bg-primaryBgWhite text-primaryDark;
+  }
+  .secDarkMode-colors {
+    @apply dark:bg-primaryDark dark:text-primaryWhite;
+  }
+  .secLightMode-colors {
+    @apply bg-primaryWhite text-primaryDark;
+  }
+  .inputFields {
+    @apply top-0 block w-full h-full px-4 py-2 text-xl transition-all font-normal bg-clip-padding bg-transparent border border-solid rounded border-primaryBlue focus:outline-none hover:border-blue-600 focus:border-blue-600;
+  }
+  .errFields {
+    @apply border border-solid rounded border-red-500 hover:border-red-500 focus:border-red-500;
+  }
+  .label {
+    @apply absolute  font-inter text-sm  px-2 transition-all  cursor-text left-4 top-3;
+  }
+  .skewedButton-outline {
+    @apply outline outline-2 outline-primaryBlue outline-offset-[-2px];
+  }
+}
+
+@layer base {
+  h1 {
+    @apply text-2xl;
+  }
+  h2 {
+    @apply text-xl;
+  }
+  h3 {
+    @apply text-lg;
+  }
+}

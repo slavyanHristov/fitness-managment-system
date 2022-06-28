@@ -16,10 +16,17 @@ module.exports = (sequelizeConn, DataTypes) => {
 
     Workout.associate = (models) => {
         Workout.hasMany(models.exercise_has_workout, {
+            foreignKey: {
+                allowNull: false
+            },
             onDelete: "cascade",
             onUpdate: "cascade"
         })
-        // TODO: put hasMany if needed
+        Workout.belongsToMany(models.exercise, {
+            through: models.exercise_has_workout,
+            onDelete: "cascade",
+            onUpdate: "cascade"
+        })
         Workout.belongsTo(models.week_day, {
             onDelete: "cascade",
             onUpdate: "cascade"
@@ -28,7 +35,11 @@ module.exports = (sequelizeConn, DataTypes) => {
             onDelete: "cascade",
             onUpdate: "cascade"
         })
-        
-      };
+        Workout.belongsTo(models.routine, {
+            onDelete: "cascade",
+            onUpdate: "cascade"
+        })
+
+    };
     return Workout
 }

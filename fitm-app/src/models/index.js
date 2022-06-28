@@ -10,6 +10,7 @@ const sequelize = new Sequelize(config.DB, config.USER, config.PASSWORD, {
   dialectOptions: {
     timezone: "local",
   },
+  logging: true // false => to disable logging
 });
 const db = {};
 

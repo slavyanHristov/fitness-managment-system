@@ -1,4 +1,7 @@
 const db = require("../models")
+const {
+  getValidationErrors
+} = require("../utils")
 const User = db.user
 const Country = db.country
 const Manager = db.manager
@@ -27,16 +30,30 @@ exports.createAdmin = async (req, res) => {
   } = req.body;
 
   if (!username || !password || !email) {
-    return res.status(401).json({
+    return res.status(400).json({
       success: false,
       message: "Empty fields!"
     })
   }
   try {
     let newAdmin = await createUser(username, password, email, 1)
-    return res.send(newAdmin);
-  } catch (error) {
-    res.status(400).send(`Error occured: ${error.message}`);
+    return res.status(201).json({
+      succes: true,
+      message: "Successfully registered an admin!",
+      newAdmin
+    });
+  } catch (err) {
+    if (err instanceof db.Sequelize.ValidationError) {
+      return res.status(400).json({
+        success: false,
+        message: "Incorrect input!",
+        errors: getValidationErrors(err.errors)
+      })
+    }
+    return res.status(500).json({
+      succes: false,
+      message: err.message
+    })
   }
 };
 
@@ -60,16 +77,33 @@ exports.registerManager = async (req, res) => {
   const t = await db.sequelize.transaction();
   try {
     let newUser = await createUser(username, password, email, 2, t)
-    await newUser.createManager({
+    let newManager = await newUser.createManager({
       name
     }, {
       transaction: t
     });
     await t.commit();
-    return res.send(newUser);
-  } catch (error) {
+    return res.status(200).json({
+      succes: true,
+      message: "Successfully registered a manager!",
+      newManager: {
+        ...newManager.toJSON(),
+        ...newUser.toJSON()
+      }
+    })
+  } catch (err) {
     await t.rollback();
-    return res.status(400).send(`Error occured: ${error.message}`);
+    if (err instanceof db.Sequelize.ValidationError) {
+      return res.status(400).json({
+        success: false,
+        message: "Incorrect input!",
+        errors: getValidationErrors(err.errors)
+      })
+    }
+    return res.status(500).json({
+      success: false,
+      message: err.message
+    })
   }
 };
 
@@ -158,7 +192,10 @@ exports.registerClient = async (req, res) => {
     return res.send(newUser);
   } catch (error) {
     await t.rollback();
-    return res.status(400).send(`Error occured: ${error.message}`);
+    return res.status(500).json({
+      success: false,
+      message: err.message
+    })
   }
 };
 
@@ -211,7 +248,10 @@ exports.createGym = async (req, res) => {
     })
   } catch (err) {
     await t.rollback()
-    return res.status(400).send(`Error occured: ${err.message}`);
+    return res.status(500).json({
+      success: false,
+      message: err.message
+    })
   }
 
 }
@@ -270,7 +310,7 @@ exports.registerInstuctor = async (req, res) => {
     })
   } catch (err) {
     t.rollback()
-    return res.status(400).json({
+    return res.status(500).json({
       success: false,
       message: err.message
     })

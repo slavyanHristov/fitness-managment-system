@@ -9,6 +9,15 @@ module.exports = (sequelizeConn, DataTypes) => {
         freezeTableName: true
     })
 
+    FitnessInstructor.getInstructor = async (id) => {
+        const loggedInstructor = await FitnessInstructor.findOne({
+            where: {
+                id: id
+            }
+        })
+        return loggedInstructor
+    }
+
     FitnessInstructor.associate = (models) => {
         FitnessInstructor.hasMany(models.client, {
             onDelete: "cascade",
@@ -43,6 +52,6 @@ module.exports = (sequelizeConn, DataTypes) => {
             onDelete: "cascade",
             onUpdate: "cascade"
         })
-      };
+    };
     return FitnessInstructor
 }

@@ -6,15 +6,15 @@
   "scripts": {
     "test": "jest --watchAll --verbose",
     "client": "cd client && npm run dev",
-    "startTwo": "concurrently -n 'server,client' -c 'yellow,green' \"nodemon server.js\" \"npm run client\"",
-    "server": "nodemon server.js"
+    "server": "cd src && nodemon server.js",
+    "app": "concurrently -n \"server,client\" -c \"bgYellow,bgGreen\" \"npm run server\" \"npm run client\""
   },
   "author": "Slavyan Hristov",
   "license": "ISC",
   "dependencies": {
-    "axios": "^0.27.0",
+    "@sendgrid/mail": "^7.7.0",
     "bcrypt": "^5.0.1",
-    "body-parser": "^1.20.0",
+    "cookie-parser": "^1.4.6",
     "cors": "^2.8.5",
     "dotenv": "^16.0.0",
     "express": "^4.17.3",
@@ -22,13 +22,14 @@
     "jsonwebtoken": "^8.5.1",
     "morgan": "^1.10.0",
     "mysql2": "^2.3.3",
-    "sequelize": "^6.19.0",
-    "socket.io": "^4.5.0"
+    "node-schedule": "^2.1.0",
+    "nodemailer": "^6.7.5",
+    "nodemailer-express-handlebars": "^5.0.0",
+    "sequelize": "^6.19.0"
   },
   "devDependencies": {
-    "concurrently": "^7.1.0",
+    "concurrently": "^7.2.2",
     "jest": "^28.1.0",
-    "nodemon": "^2.0.16",
     "supertest": "^6.2.3"
   }
 }

@@ -6,24 +6,48 @@ module.exports = (sequelizeConn, DataTypes) => {
             autoIncrement: true,
             allowNull: false
         },
-        
+        sets: {
+            type: DataTypes.INTEGER
+        },
+        reps: {
+            type: DataTypes.INTEGER
+        }
+
     }, {
         freezeTableName: true,
         timestamps: false
     })
 
     ExerciseHasWorkout.associate = (models) => {
-        // TODO: !!!!!!!
-        models.exercise.belongsToMany(models.workout, {
-            through: ExerciseHasWorkout,
+        ExerciseHasWorkout.belongsToMany(models.routine, {
+            through: models.exercise_workout_routine,
             onDelete: "cascade",
             onUpdate: "cascade"
         })
-        models.workout.belongsToMany(models.exercise, {
-            through: ExerciseHasWorkout,
+
+        ExerciseHasWorkout.belongsTo(models.exercise, {
+            foreignKey: {
+                allowNull: false
+            },
             onDelete: "cascade",
             onUpdate: "cascade"
         })
-      };
+
+        ExerciseHasWorkout.belongsTo(models.workout, {
+            foreignKey: {
+                allowNull: false
+            },
+            onDelete: "cascade",
+            onUpdate: "cascade"
+        })
+
+        ExerciseHasWorkout.hasMany(models.exercise_workout_routine, {
+            foreignKey: {
+                allowNull: false
+            },
+            onDelete: "cascade",
+            onUpdate: "cascade"
+        })
+    };
     return ExerciseHasWorkout
 }

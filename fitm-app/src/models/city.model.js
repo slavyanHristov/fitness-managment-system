@@ -1,21 +1,17 @@
 module.exports = (sequelizeConn, DataTypes) => {
-  const City = sequelizeConn.define(
-    "city",
-    {
-      id: {
-        type: DataTypes.INTEGER,
-        primaryKey: true,
-        autoIncrement: true,
-      },
-      name: {
-        type: DataTypes.STRING(45),
-      },
+  const City = sequelizeConn.define("city", {
+    id: {
+      type: DataTypes.INTEGER,
+      primaryKey: true,
+      autoIncrement: true,
     },
-    {
-      freezeTableName: true,
-      timestamps: false,
-    }
-  );
+    name: {
+      type: DataTypes.STRING(45),
+    },
+  }, {
+    freezeTableName: true,
+    timestamps: false,
+  });
 
   City.associate = (models) => {
     City.hasMany(models.address, {
@@ -26,7 +22,9 @@ module.exports = (sequelizeConn, DataTypes) => {
       onUpdate: "cascade",
     });
     City.belongsTo(models.country, {
-      foreignKey: { allowNull: false },
+      foreignKey: {
+        allowNull: false
+      },
       onDelete: "cascade",
       onUpdate: "cascade",
     });

@@ -15,10 +15,31 @@ module.exports = (sequelizeConn, DataTypes) => {
     })
 
     Routine.associate = (models) => {
+        Routine.belongsToMany(models.exercise_has_workout, {
+            through: models.exercise_workout_routine,
+            onDelete: "cascade",
+            onUpdate: "cascade"
+        })
+        Routine.hasMany(models.exercise_workout_routine, {
+            foreignKey: {
+                allowNull: false
+            },
+            onDelete: "cascade",
+            onUpdate: "cascade"
+        })
         Routine.hasMany(models.client, {
             onDelete: "cascade",
             onUpdate: "cascade"
         })
+        Routine.hasMany(models.workout, {
+            onDelete: "cascade",
+            onUpdate: "cascade"
+        })
+        Routine.hasMany(models.log_exercise, {
+            onDelete: "cascade",
+            onUpdate: "cascade"
+        })
+
         Routine.belongsTo(models.fitness_instructor, {
             foreignKey: {
                 allowNull: false
@@ -26,7 +47,7 @@ module.exports = (sequelizeConn, DataTypes) => {
             onDelete: "cascade",
             onUpdate: "cascade"
         })
-        
-      };
+
+    };
     return Routine
 }

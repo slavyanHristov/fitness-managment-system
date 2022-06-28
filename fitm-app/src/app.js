@@ -4,17 +4,20 @@ const helmet = require("helmet");
 const fs = require("fs");
 const path = require("path");
 const cors = require("cors");
+const cookieParser = require("cookie-parser")
 const userRoutes = require("./routes/register");
 const authRoutes = require("./routes/auth")
 const adminRoutes = require("./routes/admin")
 const managerRoutes = require("./routes/manager")
 const clientRoutes = require("./routes/client")
+const instructorRoutes = require("./routes/instructor")
 const myMiddlewares = require("./middleware");
 
 function createServer() {
   const app = express();
 
   const corsOptions = {
+    credentials: true,
     origin: "http://localhost:3000",
   };
   const accessLogStream = fs.createWriteStream(
@@ -22,6 +25,7 @@ function createServer() {
   ); // log every http request in access.log file
 
   app.use(cors(corsOptions));
+  app.use(cookieParser());
   app.use(helmet()); // middleware for more secure response headers -- REMOVE IT IF YOU ENCOUNTER CORS --
   app.use(morgan("combined", {
     stream: accessLogStream
@@ -35,6 +39,7 @@ function createServer() {
   app.use('/api/admin', adminRoutes)
   app.use('/api/manager', managerRoutes)
   app.use('/api/client', clientRoutes)
+  app.use('/api/instructor', instructorRoutes)
   app.use(myMiddlewares.notFound);
 
   return app;

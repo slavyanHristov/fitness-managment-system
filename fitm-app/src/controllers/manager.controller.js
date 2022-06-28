@@ -256,3 +256,34 @@ exports.getOneClient = async (req, res) => {
         })
     }
 }
+
+exports.getCurrentManager = async (req, res) => {
+    const userId = req.params.userId;
+
+    try {
+        const manager = await Manager.findOne({
+            // TODO: give me only 
+            attributes: ['name'],
+            where: {
+                userId: userId,
+                firstLogin: true
+            }
+        })
+        if (!manager) {
+            return res.status(200).json({
+                success: false,
+                message: "Manager doesn't exist or isn't found."
+            })
+        }
+
+        return res.status(200).json({
+            success: true,
+            manager
+        })
+    } catch (err) {
+        return res.status(500).json({
+            success: false,
+            message: err.message
+        })
+    }
+}

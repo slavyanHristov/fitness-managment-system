@@ -35,11 +35,33 @@ module.exports = (sequelizeConn, DataTypes) => {
         timestamps: false
     })
 
+    Food.findFood = async (foodId) => {
+        const foundFood = await Food.findOne({
+            where: {
+                id: foodId
+            }
+        })
+        return foundFood
+    }
+
     Food.associate = (models) => {
         Food.belongsTo(models.food_type, {
             onDelete: "cascade",
             onUpdate: "cascade"
         })
-      };
+        Food.belongsToMany(models.meal, {
+            through: models.meal_has_food,
+            onDelete: "cascade",
+            onUpdate: "cascade"
+        })
+        Food.hasMany(models.meal_has_food, {
+            foreignKey: {
+                allowNull: false
+            },
+            onDelete: "cascade",
+            onUpdate: "cascade"
+        })
+
+    };
     return Food
 }

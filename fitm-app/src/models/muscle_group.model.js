@@ -12,7 +12,7 @@ module.exports = (sequelizeConn, DataTypes) => {
         }
     }, {
         freezeTableName: true,
-        timestamp: false
+        timestamps: false
     })
 
     MuscleGroup.associate = (models) => {
@@ -20,7 +20,7 @@ module.exports = (sequelizeConn, DataTypes) => {
             onDelete: "cascade",
             onUpdate: "cascade"
         })
-        
-      };
+
+    };
     return MuscleGroup
 }

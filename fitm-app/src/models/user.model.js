@@ -1,4 +1,7 @@
-const {passwordHash, regularExpressions} = require('../utils')
+const {
+    hashOperations,
+    regularExpressions
+} = require('../utils')
 
 module.exports = (sequelizeConn, DataTypes) => {
     const User = sequelizeConn.define("user", {
@@ -17,12 +20,20 @@ module.exports = (sequelizeConn, DataTypes) => {
             },
             validate: {
                 is: {
-                    args: regularExpressions.username.regex,  
+                    args: regularExpressions.username.regex,
                     msg: regularExpressions.username.msg
                 },
-                len: {
-                    args: [4, 32],
-                    msg: "Username length is not in required range!"
+                minLength(value) {
+                    const minCharLength = 4;
+                    if (value.length < minCharLength) {
+                        throw new Error(`Username is too short! Minimum ${minCharLength} characters required.`)
+                    }
+                },
+                maxLength(value) {
+                    const maxCharLength = 20
+                    if (value.length > maxCharLength) {
+                        throw new Error(`Username is too long! Maximum length of ${maxCharLength} characters exceeded.`)
+                    }
                 }
             }
         },
@@ -47,34 +58,44 @@ module.exports = (sequelizeConn, DataTypes) => {
                     args: regularExpressions.password.regex,
                     msg: regularExpressions.password.msg
                 },
-                len: {
-                    args: [6,100],
-                    msg: "Password is not in the required range!"
+                minLength(value) {
+                    const minCharLength = 8
+                    if (value.length < minCharLength) {
+                        throw new Error(`Password is too short! Minimum ${minCharLength} characters required.`)
+                    }
+                },
+                maxLength(value) {
+                    const maxCharLength = 100
+                    if (value.length >= maxCharLength) {
+                        throw new Error(`Password is too long! Maximum length of ${maxCharLength} characters exceeded.`)
+                    }
                 }
             }
         }
     }, {
-        freezeTableName: true
+        freezeTableName: true,
+
     })
 
-    // User.isManager = async (username, userTypeId) => {
-    //     return await User.findOne({
-    //         where: {
-    //             [Op.and]: [
-    //                 {username: username},
-    //                 {userTypeId: userTypeId}
-    //             ]
-    //         }
-    //     })
-    // }
-
     User.beforeCreate(async (user, options) => {
-        const hashedPassword = await passwordHash.hashPassword(user.password)
+        const hashedPassword = await hashOperations.hashSecret(user.password)
         user.password = hashedPassword;
-      });
+    });
+
+    User.beforeUpdate(async (user, options) => {
+        if (user.password) {
+            const hashedPassword = await hashOperations.hashSecret(user.password)
+            user.password = hashedPassword;
+        }
+    })
 
     User.associate = (models) => {
         User.hasOne(models.refreshToken, {
+            onDelete: "cascade",
+            onUpdate: "cascade"
+        })
+
+        User.hasOne(models.reset_password_token, {
             onDelete: "cascade",
             onUpdate: "cascade"
         })
@@ -118,6 +139,6 @@ module.exports = (sequelizeConn, DataTypes) => {
             onDelete: "cascade",
             onUpdate: "cascade"
         })
-      };
+    };
     return User
 }

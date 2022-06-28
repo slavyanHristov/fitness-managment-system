@@ -24,7 +24,19 @@ module.exports = (sequelizeConn, DataTypes) => {
             onDelete: "cascade",
             onUpdate: "cascade"
         })
-        
-      };
+        Exercise.belongsToMany(models.workout, {
+            through: models.exercise_has_workout,
+            onDelete: "cascade",
+            onUpdate: "cascade"
+        })
+        Exercise.hasMany(models.exercise_has_workout, {
+            foreignKey: {
+                allowNull: false
+            },
+            onDelete: "cascade",
+            onUpdate: "cascade"
+        })
+
+    };
     return Exercise
 }

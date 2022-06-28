@@ -11,5 +11,6 @@ router.delete('/employees/:id', [authJwt.verifyToken, authJwt.isManager], contro
 router.patch('/employees/update/:id', [authJwt.verifyToken, authJwt.isManager], controller.updateEmployee)
 router.get('/clients', [authJwt.verifyToken, authJwt.isManager], controller.getAllClients)
 router.get('/clients/:id', [authJwt.verifyToken, authJwt.isManager], controller.getOneClient)
+router.get('/:userId', [authJwt.verifyToken, authJwt.isManager], controller.getCurrentManager)
 
 module.exports = router

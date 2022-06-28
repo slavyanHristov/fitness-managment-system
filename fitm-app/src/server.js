@@ -1,12 +1,13 @@
 const createServer = require("./app");
 const {
-  PORT
+  PORT,
+  BCRYPT_SALT
 } = require("../config/config");
 const dbOperations = require("./utils/db-operations");
 const app = createServer();
 const start = () => {
   try {
-    let server = app.listen(PORT, async () => {
+    app.listen(PORT, async () => {
       console.log(`Server is listening on PORT: ${PORT}`);
       await dbOperations.syncWithDB();
       // var io = require("socket.io")(server)

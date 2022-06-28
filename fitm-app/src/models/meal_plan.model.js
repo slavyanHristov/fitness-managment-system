@@ -18,11 +18,18 @@ module.exports = (sequelizeConn, DataTypes) => {
         freezeTableName: true
     })
 
-    MealPlan.associate = (models) => {
-        MealPlan.hasMany(models.eating_day, {
-            onDelete: "cascade",
-            onUpdate: "cascade"
+    MealPlan.getMealPlan = async (mealPlanId, instructor) => {
+        const mealPlan = await MealPlan.findOne({
+            where: {
+                id: mealPlanId,
+                fitnessInstructorId: instructor.id
+            }
         })
+
+        return mealPlan
+    }
+
+    MealPlan.associate = (models) => {
         MealPlan.hasMany(models.client, {
             onDelete: "cascade",
             onUpdate: "cascade"
@@ -34,6 +41,13 @@ module.exports = (sequelizeConn, DataTypes) => {
             onDelete: "cascade",
             onUpdate: "cascade"
         })
-      };
+        MealPlan.hasMany(models.eating_day, {
+            foreignKey: {
+                allowNull: false
+            },
+            onDelete: "cascade",
+            onUpdate: "cascade"
+        })
+    };
     return MealPlan
 }

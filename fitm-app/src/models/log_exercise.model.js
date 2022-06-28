@@ -1,5 +1,5 @@
 module.exports = (sequelizeConn, DataTypes) => {
-    const LogWorkout = sequelizeConn.define("log_workout", {
+    const LogExercise = sequelizeConn.define("log_exercise", {
         id: {
             type: DataTypes.INTEGER,
             primaryKey: true,
@@ -15,19 +15,29 @@ module.exports = (sequelizeConn, DataTypes) => {
             allowNull: false,
         },
         weight: {
-            type: DataTypes.DECIMAL(10,2),
+            type: DataTypes.DECIMAL(10, 2),
             allowNull: false,
         },
     }, {
         freezeTableName: true
     })
 
-    LogWorkout.associate = (models) => {
-        LogWorkout.belongsTo(models.exercise_has_workout, {
+    LogExercise.associate = (models) => {
+        // LogExercise.belongsTo(models.exercise_has_workout, { TODO: Not sure about this
+        //     onDelete: "cascade",
+        //     onUpdate: "cascade"
+        // })
+        LogExercise.belongsTo(models.exercise_workout_routine, {
             onDelete: "cascade",
             onUpdate: "cascade"
         })
-        
-      };
-    return LogWorkout
+
+        LogExercise.belongsTo(models.routine, {
+            onDelete: "cascade",
+            onUpdate: "cascade"
+        })
+
+
+    };
+    return LogExercise
 }

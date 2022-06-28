@@ -1,6 +1,12 @@
-const passwordHash = require('./password-hash')
+const hashOperations = require('./hash-operations')
 const regularExpressions = require('./regex')
+const mailSender = require("./mail-sender")
+const passwordReset = require("./password-reset")
+const getValidationErrors = require("./getValidationErrors")
 module.exports = {
-    passwordHash,
+    hashOperations,
     regularExpressions,
+    mailSender,
+    passwordReset,
+    getValidationErrors
 }

@@ -6,23 +6,21 @@ module.exports = (sequelizeConn, DataTypes) => {
             autoIncrement: true,
             allowNull: false
         },
-        
+
     }, {
         freezeTableName: true,
         timestamps: false
     })
 
     EatingDayHasMealFood.associate = (models) => {
-        models.meal_has_food.belongsToMany(models.eating_day, {
-            through: EatingDayHasMealFood,
+        EatingDayHasMealFood.belongsTo(models.eating_day, {
             onDelete: "cascade",
             onUpdate: "cascade"
         })
-        models.eating_day.belongsToMany(models.meal_has_food, {
-            through: EatingDayHasMealFood,
+        EatingDayHasMealFood.belongsTo(models.meal_has_food, {
             onDelete: "cascade",
             onUpdate: "cascade"
         })
-      };
+    };
     return EatingDayHasMealFood
 }

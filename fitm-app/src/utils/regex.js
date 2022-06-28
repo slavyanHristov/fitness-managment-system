@@ -12,12 +12,12 @@ const regularExpressions = {
         msg: "Gym name is not in correct format!"
     },
     username: {
-        regex: /^[A-Za-z]+(?:[ _-]*[A-Za-z0-9]+)*$/,
-        msg: "Username is not in correct format!"
+        regex: /^[A-Za-z]+(?:[ _-]*[A-Za-z0-9]+)$/,
+        msg: "Username must start with letter and can have only '-, _' as special characters!"
     },
     password: {
-        regex: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?_&])[A-Za-z\d@$!%*?_&]{6,}/,
-        msg: "Minimum 6 characters, at least one uppercase, lowercase, number and a special character"
+        regex: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?_&])[A-Za-z\d@$!%*?_&]*/,
+        msg: "Must have at least one uppercase, one lowercase, number and a special character!"
     },
     age: {
         regex: /^(1[6-9]|[2-9]\d)$/,

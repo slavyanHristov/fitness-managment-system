@@ -22,6 +22,10 @@ module.exports = (sequelizeConn, DataTypes) => {
                     msg: "Name not in correct range!"
                 }
             }
+        },
+        firstLogin: {
+            type: DataTypes.BOOLEAN,
+            defaultValue: true
         }
     }, {
         freezeTableName: true

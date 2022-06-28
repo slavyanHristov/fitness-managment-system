@@ -15,11 +15,33 @@ module.exports = (sequelizeConn, DataTypes) => {
             allowNull: true
         }
     }, {
-        freezeTableName: true
+        freezeTableName: true,
+        timestamps: false
     })
 
+    Meal.findMeal = async (mealId) => {
+        const foundMeal = await Meal.findOne({
+            where: {
+                id: mealId
+            }
+        })
+        return foundMeal
+    }
+
     Meal.associate = (models) => {
-        // TODO: Many-To-Many with Food
-      };
+        Meal.belongsToMany(models.food, {
+            through: models.meal_has_food,
+            onDelete: "cascade",
+            onUpdate: "cascade"
+        })
+        Meal.hasMany(models.meal_has_food, {
+            foreignKey: {
+                allowNull: false
+            },
+            onDelete: "cascade",
+            onUpdate: "cascade"
+        })
+    }
+
     return Meal
 }
