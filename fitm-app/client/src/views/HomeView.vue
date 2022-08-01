@@ -1,16 +1,19 @@
 <script setup>
+import { useRouter } from "vue-router";
 import SkewedButton from "@/components/ui/SkewedButton.vue";
+
+const router = useRouter();
 </script>
 
 <template>
   <div id="wrapper">
     <section
-      class="flex justify-center h-screen max-w-screen-xl px-4 py-8 mx-auto lg:h-auto lg:grid lg:gap-8 xl:gap-0 lg:pt-8 lg:pb-0 lg:grid-cols-12"
       id="firstSection"
+      class="flex justify-center h-screen max-w-screen-xl px-4 py-8 mx-auto lg:h-auto lg:grid lg:gap-8 xl:gap-0 lg:pt-8 lg:pb-0 lg:grid-cols-12"
     >
       <div
-        class="flex flex-col items-center justify-center lg:block place-self-center lg:col-span-7"
         id="left"
+        class="flex flex-col items-center justify-center lg:block place-self-center lg:col-span-7"
       >
         <h1
           class="max-w-2xl mb-4 text-4xl font-extrabold leading-none tracking-wide text-center uppercase lg:text-left md:text-5xl xl:text-6xl dark:text-white"
@@ -18,22 +21,24 @@ import SkewedButton from "@/components/ui/SkewedButton.vue";
           Start your adventure now
         </h1>
         <p
-          class="text-2xl tracking-wider text-gray-300 uppercase mb-14 opacity-60 font-poppins"
+          class="text-2xl tracking-wider text-center text-gray-300 uppercase lg:text-left mb-14 opacity-60 font-poppins"
         >
           With your personal instructor
         </p>
-        <div class="flex gap-12 lg:ml-12" id="buttons">
+        <div id="buttons" class="flex gap-12 lg:ml-12">
           <SkewedButton
             class="bg-primaryBlue hover:bg-transparent hover:skewedButton-outline"
-            buttonText="Gyms"
+            button-text="Gyms"
+            @click="router.push({ name: 'gymsView' })"
           />
           <SkewedButton
             class="bg-transparent hover:bg-primaryBlue skewedButton-outline"
-            buttonText="Instructors"
+            button-text="Instructors"
+            @click="router.push({ name: 'instructorsView' })"
           />
         </div>
       </div>
-      <div class="relative hidden lg:mt-0 lg:col-span-5 lg:flex" id="right">
+      <div id="right" class="relative hidden lg:mt-0 lg:col-span-5 lg:flex">
         <img
           class=""
           src="@/assets/images/triangle.svg"

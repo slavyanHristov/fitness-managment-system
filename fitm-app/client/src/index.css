@@ -1,4 +1,4 @@
-@import url("https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,700;0,800;1,700;1,800&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,300;0,700;0,800;1,100;1,400;1,700;1,800;1,900&display=swap");
 @import url("https://fonts.googleapis.com/css2?family=Inter&display=swap");
 @tailwind base;
 @tailwind components;
@@ -24,7 +24,7 @@
     @apply bg-primaryWhite text-primaryDark;
   }
   .inputFields {
-    @apply top-0 block w-full h-full px-4 py-2 text-xl transition-all font-normal bg-clip-padding bg-transparent border border-solid rounded border-primaryBlue focus:outline-none hover:border-blue-600 focus:border-blue-600;
+    @apply top-0 block w-full  px-4 py-2 text-xl transition-all font-normal bg-clip-padding bg-transparent border border-solid rounded border-primaryBlue focus:outline-none hover:border-blue-600 focus:border-blue-600;
   }
   .errFields {
     @apply border border-solid rounded border-red-500 hover:border-red-500 focus:border-red-500;
@@ -34,6 +34,9 @@
   }
   .skewedButton-outline {
     @apply outline outline-2 outline-primaryBlue outline-offset-[-2px];
+  }
+  .slider-thumb::-webkit-slider-thumb {
+    @apply appearance-none w-3 h-3 rounded-full bg-gradient-to-t from-primaryBlue to-accentBlue cursor-pointer;
   }
 }
 

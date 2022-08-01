@@ -1,12 +1,13 @@
 <script setup>
 import ThemeToggler from "@/components/ui/ThemeToggler.vue";
 import AuthUserNavItems from "@/components/ui/AuthUserNavItems.vue";
+import ProfilePicture from "../ui/ProfilePicture.vue";
+import ProfilePictureSkeleton from "../skeleton-loaders/ProfilePictureSkeleton.vue";
 // import ManagerMenuItems from "@/components/ui/ManagerMenuItems.vue";
 import { ref, onMounted, computed } from "vue";
 import { useAuthStore } from "@/stores/authStore";
-import { useRouter } from "vue-router";
+// const props = defineProps(["userData"]);
 
-const router = useRouter();
 const authStore = useAuthStore();
 const scrolledNav = ref(null);
 const mobile = ref(null);
@@ -48,15 +49,15 @@ onMounted(() => {
   window.addEventListener("scroll", updateScroll);
 });
 
-const logoutAction = async () => {
-  if (authStore.getUserState.status.isLoggedIn) {
-    await authStore.logout();
-    router.push({ name: "home" });
-    if (mobileNav.value === true) {
-      mobileNav.value = false;
-    }
-  }
-};
+// const logoutAction = async () => {
+//   if (authStore.getUserState.status.isLoggedIn) {
+//     await authStore.logout();
+//     router.push({ name: "home" });
+//     if (mobileNav.value === true) {
+//       mobileNav.value = false;
+//     }
+//   }
+// };
 </script>
 
 <template>
@@ -64,7 +65,9 @@ const logoutAction = async () => {
     :class="{ 'scrolled-nav': scrolledNav }"
     class="fixed top-0 left-0 z-40 w-full transition-all bg-primaryBgWhite dark:bg-accentDark"
   >
-    <nav class="flex items-center justify-between transition-all px-10p">
+    <nav
+      class="relative flex items-center justify-between transition-all px-10p"
+    >
       <div id="branding">
         <router-link :to="{ name: 'home' }">
           <h1
@@ -74,42 +77,60 @@ const logoutAction = async () => {
           </h1>
         </router-link>
       </div>
-
-      <div v-show="!mobile" class="flex items-center flex-1" id="navigation">
-        <div class="flex ml-9">
-          <router-link class="router-views" id="link" :to="{ name: 'about' }"
-            >About</router-link
-          >
-        </div>
-        <div
-          v-if="!loggedInUser"
-          class="flex items-center justify-end flex-1 mr-9"
-        >
-          <router-link class="router-views" id="link" :to="{ name: 'login' }"
-            >Login</router-link
-          >
-          <router-link class="router-views" id="link" :to="{ name: 'register' }"
-            >Register</router-link
-          >
-        </div>
-        <div
-          class="flex items-center justify-end flex-1 mr-9"
-          v-if="loggedInUser"
-        >
-          <AuthUserNavItems />
-          <div>
-            <button class="router-views" @click="logoutAction">Logout</button>
+      <div class="flex items-center flex-1">
+        <div v-show="!mobile" id="navigation" class="flex items-center flex-1">
+          <div class="flex ml-9">
+            <router-link id="link" class="router-views" :to="{ name: 'about' }"
+              >About</router-link
+            >
           </div>
+          <div
+            v-if="!loggedInUser"
+            class="flex items-center justify-end flex-1 mr-9"
+          >
+            <router-link id="link" class="router-views" :to="{ name: 'login' }"
+              >Login</router-link
+            >
+            <router-link
+              id="link"
+              class="router-views"
+              :to="{ name: 'register' }"
+              >Register</router-link
+            >
+          </div>
+          <div
+            v-if="loggedInUser"
+            class="flex items-center justify-end flex-1 mr-9"
+          >
+            <AuthUserNavItems />
+            <div>
+              <!-- <button class="router-views" @click="logoutAction">Logout</button> -->
+            </div>
+          </div>
+          <ThemeToggler />
         </div>
-        <ThemeToggler />
       </div>
-      <div class="flex">
+      <!--PROFILE PIC-->
+
+      <div class="flex items-center">
+        <div v-if="loggedInUser">
+          <Suspense>
+            <template #default>
+              <div>
+                <ProfilePicture />
+              </div>
+            </template>
+            <template #fallback>
+              <ProfilePictureSkeleton />
+            </template>
+          </Suspense>
+        </div>
         <div
-          @click="toggleMobileNav"
           v-show="mobile"
+          id="icon"
           :class="{ 'icon-active': mobileNav }"
           class="pl-3 cursor-pointer group"
-          id="icon"
+          @click="toggleMobileNav"
         >
           <span class="hamburger-spans"></span>
           <span
@@ -121,29 +142,29 @@ const logoutAction = async () => {
       <transition name="mobile-nav">
         <div
           v-show="mobileNav"
-          class="fixed top-0 left-0 flex flex-col items-center justify-center w-full h-full border-r dark:border-gray-700 max-w-xxs solid lightMode-colors darkMode-colors"
           id="dropdown-nav"
+          class="fixed top-0 left-0 flex flex-col items-center justify-center w-full h-full border-r dark:border-gray-700 max-w-xxs solid lightMode-colors darkMode-colors"
         >
           <div
-            @click="mobileNav = false"
             class="py-2 mt-10 text-center uppercase"
+            @click="mobileNav = false"
           >
             <router-link id="link" :to="{ name: 'about' }">About</router-link>
           </div>
           <div v-if="!loggedInUser">
-            <div @click="mobileNav = false" class="py-2 text-center uppercase">
+            <div class="py-2 text-center uppercase" @click="mobileNav = false">
               <router-link id="link" :to="{ name: 'login' }">Login</router-link>
             </div>
-            <div @click="mobileNav = false" class="py-2 text-center uppercase">
+            <div class="py-2 text-center uppercase" @click="mobileNav = false">
               <router-link id="link" :to="{ name: 'register' }"
                 >Register</router-link
               >
             </div>
           </div>
-          <div class="flex flex-col" v-if="loggedInUser">
-            <AuthUserNavItems @closeMobileNav="mobileNav = false" />
-            <button class="router-views" @click="logoutAction">Logout</button>
+          <div v-if="loggedInUser" class="flex flex-col">
+            <AuthUserNavItems @close-mobile-nav="mobileNav = false" />
           </div>
+
           <ThemeToggler class="mt-10" />
         </div>
       </transition>

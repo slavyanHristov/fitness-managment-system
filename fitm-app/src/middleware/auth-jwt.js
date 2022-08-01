@@ -1,18 +1,13 @@
 const jwt = require("jsonwebtoken");
-const {
-  Op
-} = require("sequelize");
-const {
-  JWT_SECRET
-} = require("../../config/config");
+const { Op } = require("sequelize");
+const { JWT_SECRET } = require("../../config/config");
 const db = require("../models");
 const User = db.user;
 const Client = db.client;
-const FitnessInstructor = db.fitness_instructor
+const FitnessInstructor = db.fitness_instructor;
+const Manager = db.manager;
 
-const {
-  TokenExpiredError
-} = jwt;
+const { TokenExpiredError } = jwt;
 
 const catchError = (err, res) => {
   if (err instanceof TokenExpiredError) {
@@ -40,7 +35,7 @@ const verifyToken = (req, res, next) => {
     if (err) {
       return catchError(err, res);
     }
-    req.id = decodedUser.id
+    req.id = decodedUser.id;
     next();
   });
 };
@@ -48,11 +43,14 @@ const verifyToken = (req, res, next) => {
 const isAdmin = async (req, res, next) => {
   const admin = await User.findOne({
     where: {
-      [Op.and]: [{
-        id: req.id
-      }, {
-        userTypeId: 1 // Admin
-      }],
+      [Op.and]: [
+        {
+          id: req.id,
+        },
+        {
+          userTypeId: 1, // Admin
+        },
+      ],
     },
   });
   if (!admin) {
@@ -67,15 +65,12 @@ const isAdmin = async (req, res, next) => {
 };
 
 const isManager = async (req, res, next) => {
-  const manager = await User.findOne({
+  const manager = await Manager.findOne({
     where: {
-      [Op.and]: [{
-        id: req.id
-      }, {
-        userTypeId: 2 // Manager
-      }],
+      userId: req.id,
     },
   });
+
   if (!manager) {
     return res.status(403).json({
       success: false,
@@ -83,14 +78,37 @@ const isManager = async (req, res, next) => {
     });
   } else {
     console.log(manager);
+    req.managerId = manager.id;
     return next();
   }
+
+  // const manager = await Manager.findOne({
+  //   where: {
+  //     [Op.and]: [
+  //       {
+  //         id: req.id,
+  //       },
+  //       {
+  //         userTypeId: 2, // Manager
+  //       },
+  //     ],
+  //   },
+  // });
+  // if (!manager) {
+  //   return res.status(403).json({
+  //     success: false,
+  //     message: "Manager Unauthorized!",
+  //   });
+  // } else {
+  //   console.log(manager);
+  //   return next();
+  // }
 };
 
 const isClient = async (req, res, next) => {
   const client = await Client.findOne({
     where: {
-      userId: req.id
+      userId: req.id,
     },
   });
 
@@ -101,15 +119,15 @@ const isClient = async (req, res, next) => {
     });
   } else {
     console.log(client);
-    req.clientId = client.id
+    req.clientId = client.id;
     return next();
   }
-}
+};
 
 const isInstructor = async (req, res, next) => {
   const instructor = await FitnessInstructor.findOne({
     where: {
-      userId: req.id
+      userId: req.id,
     },
   });
 
@@ -120,16 +138,16 @@ const isInstructor = async (req, res, next) => {
     });
   } else {
     console.log(instructor);
-    req.instructorId = instructor.id
+    req.instructorId = instructor.id;
     return next();
   }
-}
+};
 
 const authJwt = {
   verifyToken: verifyToken,
   isAdmin: isAdmin,
   isManager: isManager,
   isClient: isClient,
-  isInstructor: isInstructor
+  isInstructor: isInstructor,
 };
 module.exports = authJwt;

@@ -3,6 +3,7 @@ import { onMounted, onUnmounted, ref } from "vue";
 import { useAuthStore } from "@/stores/authStore";
 
 import Toast from "@/components/ui/Toast.vue";
+import WarningIcon from "./icons/WarningIcon.vue";
 const authStore = useAuthStore();
 
 const events = ["mousemove", "mousedown", "scroll", "keypress", "load"];
@@ -48,7 +49,13 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <!--TODO: Migrate this to Toast -->
-  <!-- <div v-if="isWarningReached">Are you still with us?</div> -->
-  <Toast :isToastActive="isWarningReached" toastMsg="Are you still with us?" />
+  <Toast
+    :is-toast-active="isWarningReached"
+    toast-msg="Are you still with us?"
+    toast-type="warning"
+  >
+    <template #icon>
+      <WarningIcon />
+    </template>
+  </Toast>
 </template>

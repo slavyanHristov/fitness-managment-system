@@ -13,5 +13,6 @@ const app = createApp(App)
 
 app.use(router)
 app.use(createPinia())
+app.provide("apiUrlPath", "http://localhost:5000/")
 
 app.mount('#app')

@@ -1,13 +1,12 @@
 <script setup>
-import AuthService from "@/services/AuthService";
-
-import { ref, computed, onUnmounted } from "vue";
+import AuthService from "@/services/API-calls/AuthService";
+import { ref, computed, onUnmounted, onMounted } from "vue";
 import { useAuthStore } from "@/stores/authStore";
 import InputField from "./InputField.vue";
 
 import useVuelidate from "@vuelidate/core";
 import { required, sameAs, helpers } from "@vuelidate/validators";
-import SubmitButton from "./SubmitButton.vue";
+import MainButton from "./MainButton.vue";
 
 const props = defineProps(["newManagerDetails"]);
 const emit = defineEmits(["closeModal"]);
@@ -19,6 +18,11 @@ const user = ref({
   name: "",
   password: "",
   confirmPassword: "",
+});
+
+onMounted(() => {
+  console.log(props.newManagerDetails);
+  user.value.name = props.newManagerDetails.name;
 });
 
 onUnmounted(async () => {
@@ -58,7 +62,6 @@ const v$ = useVuelidate(rules, user);
 const errors = ref(null);
 const isSuccessful = ref(false);
 const successMessage = ref("");
-user.value.name = props.newManagerDetails.name;
 
 const updateAccountDetails = async () => {
   try {
@@ -84,36 +87,36 @@ const updateAccountDetails = async () => {
   <div class="bg-primaryBgWhite dark:bg-accentDark">
     <form class="w-96 bg-inherit" @submit.prevent="updateAccountDetails">
       <InputField
-        inputType="text"
-        inputId="name"
-        :inputErrors="errors"
-        :vuelidateErrors="v$.name.$errors"
         v-model:inputContent="user.name"
-        labelText="Full Name"
+        input-type="text"
+        input-id="name"
+        :input-errors="errors"
+        :vuelidate-errors="v$.name.$errors"
+        label-text="Full Name"
       />
       <InputField
-        inputType="password"
-        inputId="password"
-        :inputErrors="errors"
-        :vuelidateErrors="v$.password.$errors"
         v-model:inputContent="user.password"
-        labelText="Password"
+        input-type="password"
+        input-id="password"
+        :input-errors="errors"
+        :vuelidate-errors="v$.password.$errors"
+        label-text="Password"
       />
       <InputField
-        inputType="password"
-        inputId="confPassword"
-        :inputErrors="errors"
-        :vuelidateErrors="v$.confirmPassword.$errors"
         v-model:inputContent="user.confirmPassword"
-        labelText="Confirm Password"
+        input-type="password"
+        input-id="confPassword"
+        :input-errors="errors"
+        :vuelidate-errors="v$.confirmPassword.$errors"
+        label-text="Confirm Password"
       />
       <div
-        class="mb-5 text-xs text-center text-green-500 font-inter"
         v-if="isSuccessful"
+        class="mb-5 text-xs text-center text-green-500 font-inter"
       >
         {{ successMessage }}
       </div>
-      <SubmitButton buttonText="Continue" />
+      <MainButton button-text="Continue" />
     </form>
   </div>
 </template>

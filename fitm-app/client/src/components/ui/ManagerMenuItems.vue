@@ -5,9 +5,9 @@ defineEmits(["closeMobileNav"]);
 <template>
   <div>
     <router-link
-      @click="$emit('closeMobileNav')"
       class="router-views"
       :to="{ name: 'managerDashboard' }"
+      @click="$emit('closeMobileNav')"
       >M-Dashboard</router-link
     >
   </div>

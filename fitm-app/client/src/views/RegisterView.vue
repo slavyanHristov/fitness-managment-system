@@ -5,11 +5,12 @@ import { useAuthStore } from "@/stores/authStore";
 
 import useVuelidate from "@vuelidate/core";
 import { required, email, sameAs, helpers } from "@vuelidate/validators";
-import SubmitButton from "@/components/ui/SubmitButton.vue";
+import MainButton from "@/components/ui/MainButton.vue";
 
 const authStore = useAuthStore();
 
 const user = ref({
+  name: "",
   username: "",
   password: "",
   confirmPassword: "",
@@ -18,6 +19,9 @@ const user = ref({
 
 const rules = computed(() => {
   return {
+    name: {
+      required: helpers.withMessage("Field cannot be empty!", required),
+    },
     username: {
       required: helpers.withMessage("Field cannot be empty!", required),
     },
@@ -54,7 +58,6 @@ const saveUser = async () => {
 
     if (hasValidationPassed) {
       let response = await authStore.register(user.value);
-
       console.log("User registered!");
       console.log(response);
 
@@ -66,31 +69,6 @@ const saveUser = async () => {
       errors.value = err.response.data.errors;
     console.log(err);
   }
-
-  // authStore.register(user.value).then(
-  //   (userData) => {
-  //     console.log("Registered");
-  //     console.log(userData);
-  //     isSuccessful.value = true;
-  //     successMessage.value = userData.message;
-  //   },
-  //   (err) => {
-  //     errors.value = err.response.data.errors;
-  //     console.log(err);
-  //   }
-  // );
-
-  // try {
-  //   isSuccessful.value = false;
-  //   errors.value = null;
-
-  //   const response = await RegisterAPI.registerAdmin(user.value);
-  //   isSuccessful.value = true;
-  //   successMessage.value = response.data.message;
-  // } catch (err) {
-  //   errors.value = err.response.data.errors;
-  //   console.log(err);
-  // }
 };
 </script>
 
@@ -105,41 +83,51 @@ const saveUser = async () => {
         >
           <form class="w-full bg-inherit" @submit.prevent="saveUser">
             <InputField
-              inputId="username"
-              inputType="text"
-              :inputErrors="errors"
-              :vuelidateErrors="v$.username.$errors"
-              v-model:inputContent="user.username"
-              labelText="Username"
+              v-model:inputContent.trim="user.name"
+              input-id="name"
+              input-type="text"
+              :input-errors="errors"
+              :vuelidate-errors="v$.name.$errors"
+              label-text="Full Name"
+            />
+            <InputField
+              v-model:inputContent.trim="user.username"
+              input-id="username"
+              input-type="text"
+              :input-errors="errors"
+              :vuelidate-errors="v$.username.$errors"
+              label-text="Username"
             />
 
             <InputField
-              inputId="password"
-              inputType="password"
-              :inputErrors="errors"
-              :vuelidateErrors="v$.password.$errors"
-              v-model:inputContent="user.password"
-              labelText="Password"
+              v-model:inputContent.trim="user.password"
+              input-id="password"
+              input-type="password"
+              :input-errors="errors"
+              :vuelidate-errors="v$.password.$errors"
+              label-text="Password"
             />
             <InputField
-              inputId="confPassword"
-              inputType="password"
-              :vuelidateErrors="v$.confirmPassword.$errors"
-              v-model:inputContent="user.confirmPassword"
-              labelText="Confirm Password"
+              v-model:inputContent.trim="user.confirmPassword"
+              input-id="confPassword"
+              input-type="password"
+              :vuelidate-errors="v$.confirmPassword.$errors"
+              label-text="Confirm Password"
             />
             <InputField
-              inputId="email"
-              inputType="email"
-              :inputErrors="errors"
-              :vuelidateErrors="v$.email.$errors"
-              v-model:inputContent="user.email"
-              labelText="Email"
+              v-model:inputContent.trim="user.email"
+              input-id="email"
+              input-type="email"
+              :input-errors="errors"
+              :vuelidate-errors="v$.email.$errors"
+              label-text="Email"
             />
+
+            <!-- <input type="file" name="file" @change="onFileSelected" /> -->
 
             <div
-              class="text-xs text-center text-green-500 font-inter"
               v-show="isSuccessful"
+              class="text-xs text-center text-green-500 font-inter"
             >
               {{ successMessage }}
             </div>
@@ -155,7 +143,7 @@ const saveUser = async () => {
                   >Sign in</router-link
                 ></span
               >
-              <SubmitButton buttonText="Sign up" />
+              <MainButton button-text="Sign up" />
             </div>
           </form>
         </div>

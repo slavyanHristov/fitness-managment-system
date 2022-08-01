@@ -18,13 +18,6 @@ module.exports = (sequelizeConn, DataTypes) => {
   );
 
   Address.associate = (models) => {
-    Address.hasMany(models.employee, {
-      foreignKey: {
-        allowNull: false,
-      },
-      onDelete: "cascade",
-      onUpdate: "cascade",
-    });
     Address.hasMany(models.client, {
       onDelete: "cascade",
       onUpdate: "cascade",

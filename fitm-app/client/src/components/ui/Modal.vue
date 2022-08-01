@@ -7,19 +7,19 @@ defineEmits(["closeModal"]);
 <template>
   <div>
     <Transition>
-      <div id="modal" class="relative z-50" v-if="props.open">
+      <div v-if="props.open" id="modal" class="relative z-50">
         <div
           id="modal-background"
-          @click.self="props.isClosableModal ? $emit('closeModal') : null"
           class="fixed top-0 left-0 flex items-center justify-center w-full h-full bg-darkenedColor"
+          @click.self="props.isClosableModal ? $emit('closeModal') : null"
         >
           <div
             id="modal-content"
             class="relative bg-white rounded-md shadow outline-none darkMode-colors lightMode-colors"
           >
             <div
-              class="flex items-start justify-between p-4 border-b rounded-t"
               id="modal-header"
+              class="flex items-start justify-between p-4 border-b rounded-t"
             >
               <h3 class="text-xl font-semibold">{{ props.headerTitle }}</h3>
               <button v-if="props.isClosableModal" @click="$emit('closeModal')">

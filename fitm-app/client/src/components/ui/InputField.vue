@@ -15,6 +15,7 @@ defineEmits(["update:inputContent"]);
   <div class="flex flex-col mb-5 bg-inherit">
     <div class="relative bg-inherit">
       <input
+        :id="props.inputId"
         class="inputFields"
         :class="[
           {
@@ -28,13 +29,13 @@ defineEmits(["update:inputContent"]);
           },
         ]"
         :type="props.inputType"
-        :id="props.inputId"
+        :name="props.inputId"
         placeholder=" "
         autocomplete="off"
         :value="props.inputContent"
         @input="$emit('update:inputContent', $event.target.value)"
       />
-      <label class="label bg-inherit" :for="props.inputId" id="label-input">
+      <label id="label-input" class="label bg-inherit" :for="props.inputId">
         {{ props.labelText }}
       </label>
       <div
@@ -46,8 +47,9 @@ defineEmits(["update:inputContent"]);
       </div>
       <div v-if="props.inputErrors && props.inputErrors[inputId]">
         <div
-          class="text-xs text-red-500 font-inter"
           v-for="err in props.inputErrors[inputId]"
+          :key="err.id"
+          class="text-xs text-red-500 font-inter"
         >
           {{ err }}
         </div>

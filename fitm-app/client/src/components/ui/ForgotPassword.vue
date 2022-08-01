@@ -1,8 +1,8 @@
 <script setup>
 import { ref } from "vue";
-import AuthService from "@/services/AuthService";
+import UserService from "@/services/API-calls/UserService";
 import InputField from "./InputField.vue";
-import SubmitButton from "./SubmitButton.vue";
+import MainButton from "./MainButton.vue";
 const emit = defineEmits(["closeModal"]);
 const user = ref({
   email: "",
@@ -14,7 +14,7 @@ const isSuccessful = ref(false);
 const resetPasswordRequest = async () => {
   try {
     errorMsg.value = null;
-    const res = await AuthService.requestPasswordReset(user.value);
+    const res = await UserService.requestPasswordReset(user.value);
     console.log(res);
     isSuccessful.value = true;
     successMessage.value = "Success! Check your mailbox.";
@@ -38,26 +38,26 @@ const resetPasswordRequest = async () => {
     </div>
     <form class="bg-inherit" @submit.prevent="resetPasswordRequest">
       <InputField
-        inputId="email"
-        inputType="email"
-        :failureErrors="errorMsg"
-        labelText="Email"
         v-model:inputContent="user.email"
+        input-id="email"
+        input-type="email"
+        :failure-errors="errorMsg"
+        label-text="Email"
       />
       <div
-        class="mb-5 text-xs text-center text-green-500 font-inter"
         v-if="isSuccessful"
+        class="mb-5 text-xs text-center text-green-500 font-inter"
       >
         {{ successMessage }}
       </div>
       <div
-        class="mb-5 text-xs text-center text-red-500 font-inter"
         v-if="errorMsg"
+        class="mb-5 text-xs text-center text-red-500 font-inter"
       >
         {{ errorMsg }}
       </div>
 
-      <SubmitButton buttonText="Continue" />
+      <MainButton button-text="Continue" />
     </form>
   </div>
 </template>

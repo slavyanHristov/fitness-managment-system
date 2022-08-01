@@ -5,7 +5,7 @@ import { useRouter } from "vue-router";
 import Modal from "@/components/ui/Modal.vue";
 import InputField from "@/components/ui/InputField.vue";
 import ForgotPassword from "@/components/ui/ForgotPassword.vue";
-import SubmitButton from "@/components/ui/SubmitButton.vue";
+import MainButton from "@/components/ui/MainButton.vue";
 
 const router = useRouter();
 const authStore = useAuthStore();
@@ -19,12 +19,31 @@ const errorMsg = ref("");
 const isModalOpen = ref(false);
 
 const pushToDashboard = (user) => {
-  user["userType"] === 1
-    ? router.push({ name: "adminDashboard" })
-    : user["userType"] === 2
-    ? router.push({ name: "managerDashboard" })
-    : router.push({ name: "home" });
+  switch (user["userType"]) {
+    case 1:
+      router.push({ name: "adminDashboard" });
+      break;
+    case 2:
+      router.push({ name: "managerDashboard" });
+      break;
+    case 3:
+      router.push({ name: "instructorDashboard" });
+      break;
+    case 4:
+      router.push({ name: "clientDashboard" });
+      break;
+    default:
+      router.push({ name: "home" });
+      break;
+  }
 };
+// const pushToDashboard = (user) => {
+//   user["userType"] === 1
+//     ? router.push({ name: "adminDashboard" })
+//     : user["userType"] === 2
+//     ? router.push({ name: "managerDashboard" })
+//     : router.push({ name: "home" });
+// };
 
 const loginAction = async () => {
   errorMsg.value = "";
@@ -66,13 +85,13 @@ const setModal = () => {
   isModalOpen.value = true;
 };
 
-const testProtectedAction = async () => {
-  // try {
-  //   const response = await AdminAPI.getManagers();
-  // } catch (err) {
-  //   console.log(err.response.data);
-  // }
-};
+// const testProtectedAction = async () => {
+//   // try {
+//   //   const response = await AdminAPI.getManagers();
+//   // } catch (err) {
+//   //   console.log(err.response.data);
+//   // }
+// };
 </script>
 
 <template>
@@ -81,11 +100,11 @@ const testProtectedAction = async () => {
   >
     <Modal
       :open="isModalOpen"
-      headerTitle="Password Reset"
-      :isClosableModal="true"
-      @closeModal="isModalOpen = !isModalOpen"
+      header-title="Password Reset"
+      :is-closable-modal="true"
+      @close-modal="isModalOpen = !isModalOpen"
     >
-      <ForgotPassword @closeModal="isModalOpen = !isModalOpen" />
+      <ForgotPassword @close-modal="isModalOpen = !isModalOpen" />
     </Modal>
     <div class="container h-full">
       <div class="flex flex-wrap items-center justify-center w-auto h-full">
@@ -97,28 +116,28 @@ const testProtectedAction = async () => {
         >
           <form class="w-full bg-inherit" @submit.prevent="loginAction">
             <InputField
-              inputId="username"
-              inputType="text"
-              :failureErrors="errorMsg"
               v-model:inputContent="user.username"
-              labelText="Username"
+              input-id="username"
+              input-type="text"
+              :failure-errors="errorMsg"
+              label-text="Username"
             />
             <InputField
-              inputId="password"
-              inputType="password"
-              :failureErrors="errorMsg"
               v-model:inputContent="user.password"
-              labelText="Password"
+              input-id="password"
+              input-type="password"
+              :failure-errors="errorMsg"
+              label-text="Password"
             />
             <div
               class="flex flex-col items-center justify-between gap-3 mb-6 md:flex-row"
             >
               <div class="form-group form-check">
                 <input
-                  type="checkbox"
-                  class="float-left w-4 h-4 mt-1 mr-2 align-top transition duration-200 bg-white bg-center bg-no-repeat bg-contain border border-gray-300 rounded-sm appearance-none cursor-pointer form-check-input checked:bg-blue-600 checked:border-blue-600 focus:outline-none"
                   id="exampleCheck3"
                   v-model="user.rememberUser"
+                  type="checkbox"
+                  class="float-left w-4 h-4 mt-1 mr-2 align-top transition duration-200 bg-white bg-center bg-no-repeat bg-contain border border-gray-300 rounded-sm appearance-none cursor-pointer form-check-input checked:bg-blue-600 checked:border-blue-600 focus:outline-none"
                 />
                 <label
                   class="inline-block form-check-label md:mb-0"
@@ -127,14 +146,14 @@ const testProtectedAction = async () => {
                 >
               </div>
               <a
-                @click="setModal"
                 class="transition duration-200 ease-in-out cursor-pointer text-primaryBlue hover:text-blue-700 focus:text-blue-700 active:text-blue-800"
+                @click="setModal"
                 >Forgot your password?</a
               >
             </div>
             <div
-              class="text-xs text-center text-red-500 font-inter"
               v-if="errorMsg"
+              class="text-xs text-center text-red-500 font-inter"
             >
               {{ errorMsg }}
             </div>
@@ -150,7 +169,7 @@ const testProtectedAction = async () => {
                   >Sign up</router-link
                 ></span
               >
-              <SubmitButton buttonText="Sign in" />
+              <MainButton button-text="Sign in" />
             </div>
           </form>
         </div>

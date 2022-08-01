@@ -1,12 +1,12 @@
 <script setup>
 import { ref, onMounted, computed } from "vue";
-import AuthService from "@/services/AuthService";
+import UserService from "@/services/API-calls/UserService";
 import InputField from "@/components/ui/InputField.vue";
 
 import useVuelidate from "@vuelidate/core";
 import { required, email, sameAs, helpers } from "@vuelidate/validators";
 import { useRoute } from "vue-router";
-import SubmitButton from "@/components/ui/SubmitButton.vue";
+import MainButton from "@/components/ui/MainButton.vue";
 
 const route = useRoute();
 const user = ref({
@@ -50,7 +50,7 @@ const newPassword = async () => {
 
     if (hasValidationPassed) {
       user.value.token = route.query.token;
-      const res = await AuthService.newPassword(user.value);
+      await UserService.newPassword(user.value);
     }
   } catch (err) {
     if (err.response && err.response.data)
@@ -78,30 +78,30 @@ const newPassword = async () => {
           </div>
           <form class="w-full" @submit.prevent="newPassword">
             <InputField
-              inputId="email"
-              inputType="email"
-              :inputErrors="errors"
-              :vuelidateErrors="v$.email.$errors"
               v-model:inputContent="user.email"
-              labelText="Email"
+              input-id="email"
+              input-type="email"
+              :input-errors="errors"
+              :vuelidate-errors="v$.email.$errors"
+              label-text="Email"
             />
             <InputField
-              inputId="password"
-              inputType="password"
-              :inputErrors="errors"
-              :vuelidateErrors="v$.newPassword.$errors"
               v-model:inputContent="user.newPassword"
-              labelText="New Password"
+              input-id="password"
+              input-type="password"
+              :input-errors="errors"
+              :vuelidate-errors="v$.newPassword.$errors"
+              label-text="New Password"
             />
             <InputField
-              inputId="confPassword"
-              inputType="password"
-              :inputErrors="errors"
-              :vuelidateErrors="v$.confirmPassword.$errors"
               v-model:inputContent="user.confirmPassword"
-              labelText="Confirm New Password"
+              input-id="confPassword"
+              input-type="password"
+              :input-errors="errors"
+              :vuelidate-errors="v$.confirmPassword.$errors"
+              label-text="Confirm New Password"
             />
-            <SubmitButton buttonText="Change password" />
+            <MainButton button-text="Change password" />
           </form>
         </div>
       </div>
