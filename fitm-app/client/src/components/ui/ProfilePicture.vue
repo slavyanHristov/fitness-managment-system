@@ -1,12 +1,9 @@
 <script setup>
 import { ref, inject } from "vue";
-import { useAuthStore } from "@/stores/authStore";
 import { useImgStore } from "@/stores/imgStore";
 import Dropdown from "./Dropdown.vue";
 
 const imgStore = useImgStore();
-const authStore = useAuthStore();
-const currentUser = authStore.getCurrentUser;
 const apiUrlPath = inject("apiUrlPath");
 const userData = async () => {
   try {

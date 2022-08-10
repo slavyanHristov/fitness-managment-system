@@ -326,9 +326,7 @@ const createGym = async () => {
 </script>
 
 <template>
-  <main
-    class="flex items-center justify-center flex-auto min-w-full min-h-screen"
-  >
+  <main class="flex items-center justify-center min-w-full min-h-screen">
     <Toast
       class="top-[55px]"
       :is-toast-active="toastMsg"
@@ -340,35 +338,57 @@ const createGym = async () => {
         <SuccessIcon v-if="toastType === 'success'" />
       </template>
     </Toast>
-    <div class="container h-full">
-      <div class="flex items-center justify-center min-h-screen">
-        <div
-          id="container"
-          class="w-full max-w-3xl rounded-sm bg-accentWhite dark:bg-accentDark"
+    <MultiStepSkeleton v-if="noManagers" />
+    <div v-else class="grid w-10/12 grid-cols-1 lg:grid-cols-2">
+      <div
+        id="form"
+        class="flex flex-col items-center justify-center rounded-lg bg-accentWhite dark:bg-accentDark"
+      >
+        <MultiStepForm
+          :vuelidate="v$"
+          :db-errors="errors"
+          :fields="fields"
+          :steps="steps"
+          :combo-box-items="flattenedManagers"
+          @on-submit="createGym"
         >
-          <MultiStepSkeleton v-if="noManagers" />
-          <MultiStepForm
-            v-else
-            :vuelidate="v$"
-            :db-errors="errors"
-            :fields="fields"
-            :steps="steps"
-            :combo-box-items="flattenedManagers"
-            @on-submit="createGym"
-          >
-            <template #resultMessage>
-              <div>
-                <div
-                  v-if="errorMessage"
-                  class="text-xs text-center text-red-500 font-inter"
-                >
-                  {{ errorMessage }}
-                </div>
+          <template #resultMessage>
+            <div>
+              <div
+                v-if="errorMessage"
+                class="text-xs text-center text-red-500 font-inter"
+              >
+                {{ errorMessage }}
               </div>
-            </template>
-          </MultiStepForm>
+            </div>
+          </template>
+        </MultiStepForm>
+      </div>
+      <div
+        id="cover"
+        class="hidden lg:flex rounded-r-md flex-col items-center justify-center min-h-[80vh]"
+      >
+        <div>
+          <h1 class="text-5xl font-bold uppercase text-primaryWhite">
+            Register Gym
+          </h1>
+          <p class="mt-2 text-center text-primaryWhite">
+            Gym addition to the system
+          </p>
         </div>
       </div>
     </div>
   </main>
 </template>
+
+<style scoped>
+#cover {
+  background-image: linear-gradient(
+      rgba(27, 154, 252, 0.1),
+      rgba(37, 205, 247, 0.1)
+    ),
+    url("@/assets/images/addGym.jpg");
+  background-position: center;
+  background-size: cover;
+}
+</style>

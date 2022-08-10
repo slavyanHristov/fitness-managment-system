@@ -5,7 +5,7 @@ defineEmits(["update:sliderValue"]);
 <template>
   <div
     id="range-section"
-    class="flex relative flex-col p-2.5 items-center justify-center w-full h-full rounded-lg bg-testColor"
+    class="flex relative flex-col p-2.5 items-center justify-center w-full h-full rounded-lg bg-primaryWhite dark:bg-testColor"
   >
     <h3
       class="mb-2.5 absolute top-2.5 font-poppins-light font-light uppercase tracking-wide"

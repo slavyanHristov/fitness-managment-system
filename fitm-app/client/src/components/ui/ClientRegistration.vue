@@ -348,9 +348,7 @@ const registerClient = async () => {
 };
 </script>
 <template>
-  <main
-    class="flex items-center justify-center flex-auto min-w-full min-h-screen"
-  >
+  <main class="flex items-center justify-center min-w-full min-h-screen">
     <Toast
       class="top-[55px]"
       :is-toast-active="successMessage"
@@ -361,10 +359,45 @@ const registerClient = async () => {
         <SuccessIcon />
       </template>
     </Toast>
-    <div class="container h-full">
+    <div id="grid-container" class="grid w-10/12 grid-cols-1 lg:grid-cols-2">
       <div
-        class="w-full max-w-full rounded-sm bg-accentWhite dark:bg-accentDark"
+        id="cover"
+        class="hidden lg:flex flex-col items-center justify-center min-h-[80vh]"
       >
+        <div>
+          <h1
+            class="text-3xl font-bold xl:text-5xl text-primaryWhite drop-shadow-solidMd"
+          >
+            EXPLORE
+          </h1>
+          <h1
+            class="text-3xl font-bold xl:text-5xl text-primaryWhite drop-shadow-solidMd"
+          >
+            NEW POSIBILITIES.
+          </h1>
+          <div>
+            <div
+              class="flex items-center my-4 before:flex-1 before:border-t before:border-gray-300 before:mt-0.5 after:flex-1 after:border-t after:border-gray-300 after:mt-0.5"
+            ></div>
+            <div class="flex flex-col items-center justify-center gap-3">
+              <span
+                class="font-bold uppercase text-primaryWhite drop-shadow-solidSm"
+                >Already have an account?
+                <router-link
+                  :to="{ name: 'login' }"
+                  class="font-semibold uppercase transition-colors bg-primaryBlue hover:bg-accentBlue p-1.5 rounded-full text-primaryWhite"
+                  >Sign in</router-link
+                ></span
+              >
+            </div>
+          </div>
+        </div>
+      </div>
+      <div
+        id="form"
+        class="flex flex-col items-center justify-center rounded-lg bg-accentWhite dark:bg-accentDark"
+      >
+        <h1 class="block mt-3 font-bold uppercase lg:hidden">Sign up</h1>
         <MultiStepForm
           :vuelidate="v$"
           :db-errors="errors"
@@ -387,3 +420,15 @@ const registerClient = async () => {
     </div>
   </main>
 </template>
+
+<style scoped>
+#cover {
+  background-image: linear-gradient(
+      rgba(27, 154, 252, 0.3),
+      rgba(37, 205, 247, 0.3)
+    ),
+    url("@/assets/images/client-register.jpg");
+  background-size: cover;
+  background-position: center;
+}
+</style>

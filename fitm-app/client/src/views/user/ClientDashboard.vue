@@ -1,19 +1,27 @@
 <script setup>
-import { useRouter } from "vue-router";
+import { ref, onErrorCaptured } from "vue";
+import ClientDashboardData from "@/components/ui/client-components/ClientDashboardData.vue";
+import MultiStepSkeleton from "@/components/skeleton-loaders/MultiStepSkeleton.vue";
 
-const router = useRouter();
+const err = ref(null);
+onErrorCaptured((e) => {
+  err.value = e;
+  return true;
+});
 </script>
 
 <template>
   <div>
-    <div>
-      <h1 class="text-center text-red-500">Welcome, Client!</h1>
-      <button @click="router.push({ name: 'clientRoutine' })">
-        My Routine
-      </button>
-      <button @click="router.push({ name: 'clientMealPlan' })">
-        My Meal Plan
-      </button>
+    <div v-if="err">
+      <MultiStepSkeleton />
     </div>
+    <Suspense>
+      <template #default>
+        <ClientDashboardData />
+      </template>
+      <template #fallback>
+        <MultiStepSkeleton />
+      </template>
+    </Suspense>
   </div>
 </template>

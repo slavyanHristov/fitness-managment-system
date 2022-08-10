@@ -4,6 +4,9 @@ class ManagerAPI {
   getManager(userId) {
     return ProtectedAPI().get(`/manager/${userId}`);
   }
+  getDashboardData() {
+    return ProtectedAPI().get("/manager/get/dashboard-data");
+  }
   registerInstructor(userData) {
     return ProtectedAPI().post("/register/users/instructor", userData);
   }

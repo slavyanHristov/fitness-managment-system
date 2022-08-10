@@ -98,9 +98,20 @@ router.get(
   [authJwt.verifyToken, authJwt.isInstructor],
   controller.getYourClients
 );
+router.delete(
+  "/routines/delete/exercise/:id",
+  [authJwt.verifyToken, authJwt.isInstructor],
+  controller.deleteExerciseFromWorkout
+);
 router.patch(
   "/edit/client/:clientId",
   [authJwt.verifyToken, authJwt.isInstructor],
   controller.editClient
+);
+
+router.get(
+  "/dashboard-data",
+  [authJwt.verifyToken, authJwt.isInstructor],
+  controller.getDashboardData
 );
 module.exports = router;

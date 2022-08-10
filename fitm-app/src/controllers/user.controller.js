@@ -417,3 +417,12 @@ exports.getNewUser = async (req, res) => {
     });
   }
 };
+
+exports.findUserType = async (typeId) => {
+  const userType = await UserType.findOne({
+    where: {
+      id: typeId,
+    },
+  });
+  return userType;
+};

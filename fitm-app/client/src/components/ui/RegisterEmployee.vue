@@ -236,32 +236,45 @@ onUnmounted(() => {
         <SuccessIcon v-if="toastType === 'success'" />
       </template>
     </Toast>
-    <div class="container h-full">
-      <div class="flex items-center justify-center min-h-screen">
-        <div
-          class="w-full max-w-3xl rounded-sm bg-accentWhite dark:bg-accentDark"
+    <MultiStepSkeleton v-if="noGyms" />
+    <div
+      v-else
+      id="grid-container"
+      class="grid w-10/12 grid-cols-1 lg:grid-cols-2"
+    >
+      <div
+        id="cover"
+        class="hidden relative lg:flex flex-col items-center justify-center min-h-[80vh]"
+      >
+        <img
+          class="absolute object-contain"
+          src="@/assets/images/register.svg"
+          alt=""
+        />
+      </div>
+      <div
+        id="form"
+        class="flex flex-col items-center justify-center rounded-lg bg-accentWhite dark:bg-accentDark"
+      >
+        <h1 class="pt-3 font-bold uppercase">Register Employee</h1>
+        <MultiStepForm
+          :vuelidate="v$"
+          :db-errors="errors"
+          :fields="employee"
+          :steps="steps"
+          @on-submit="createEmployee"
         >
-          <MultiStepSkeleton v-if="noGyms" />
-          <MultiStepForm
-            v-else
-            :vuelidate="v$"
-            :db-errors="errors"
-            :fields="employee"
-            :steps="steps"
-            @on-submit="createEmployee"
-          >
-            <template #resultMessage>
-              <div>
-                <div
-                  v-if="errorMessage"
-                  class="text-xs text-center text-red-500 font-inter"
-                >
-                  {{ errorMessage }}
-                </div>
+          <template #resultMessage>
+            <div>
+              <div
+                v-if="errorMessage"
+                class="text-xs text-center text-red-500 font-inter"
+              >
+                {{ errorMessage }}
               </div>
-            </template>
-          </MultiStepForm>
-        </div>
+            </div>
+          </template>
+        </MultiStepForm>
       </div>
     </div>
   </main>

@@ -14,7 +14,7 @@ const redirectToGym = (id) => {
 <template>
   <div
     id="container"
-    class="h-full overflow-hidden rounded shadow-lg bg-testColor w-80"
+    class="h-full overflow-hidden rounded shadow-lg bg-primaryWhite dark:bg-testColor w-80"
   >
     <div id="inner">
       <div id="header" class="">
@@ -25,11 +25,25 @@ const redirectToGym = (id) => {
         />
       </div>
       <div id="content">
-        <h3>{{ props.item.name }}</h3>
-        <p>{{ props.item.monthly_cost }}</p>
+        <h3 class="italic font-bold text-center uppercase">
+          {{ props.item.name }}
+        </h3>
+        <div
+          class="flex items-center justify-center gap-2 p-2 bg-accentWhite dark:bg-accentTestColor"
+        >
+          <p>Montly Cost:</p>
+          <p class="text-lg italic text-center">
+            {{ props.item.monthly_cost }}
+          </p>
+        </div>
       </div>
-      <div id="footer">
-        <button @click="redirectToGym(props.item.id)">Details</button>
+      <div id="footer" class="bg-accentWhite dark:bg-accentTestColor">
+        <button
+          class="w-full my-1.5 transition-colors tracking-widest font-bold rounded-full bg-primaryBlue hover:bg-accentBlue"
+          @click="redirectToGym(props.item.id)"
+        >
+          Details
+        </button>
       </div>
     </div>
   </div>

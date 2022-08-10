@@ -28,12 +28,12 @@ module.exports = (sequelizeConn, DataTypes) => {
   };
 
   EatingDay.associate = (models) => {
-    EatingDay.belongsToMany(models.meal, {
-      through: models.eatingDay_has_meal,
+    EatingDay.belongsToMany(models.meal_type, {
+      through: models.meal,
       onDelete: "cascade",
       onUpdate: "cascade",
     });
-    EatingDay.hasMany(models.eatingDay_has_meal, {
+    EatingDay.hasMany(models.meal, {
       foreignKey: {
         allowNull: false,
       },

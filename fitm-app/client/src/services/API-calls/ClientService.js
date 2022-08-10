@@ -4,6 +4,9 @@ class ClientAPI {
   createMembership(membershipData) {
     return ProtectedAPI().post("/client/membership/create", membershipData);
   }
+  getDashboardData() {
+    return ProtectedAPI().get("/client/dashboard-data");
+  }
   validateMembership() {
     return ProtectedAPI().post("/client/membership/verifyEndDate");
   }
@@ -30,6 +33,9 @@ class ClientAPI {
   }
   addFoodToMeal(foodData) {
     return ProtectedAPI().post("/client/mealPlan/add/food", foodData);
+  }
+  deleteFoodFromMeal(id) {
+    return ProtectedAPI().delete(`/client/mealPlan/delete/food/${id}`);
   }
 }
 

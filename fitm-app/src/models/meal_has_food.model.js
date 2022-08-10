@@ -29,7 +29,7 @@ module.exports = (sequelizeConn, DataTypes) => {
     //     onDelete: "cascade",
     //     onUpdate: "cascade"
     // })
-    MealHasFood.belongsTo(models.eatingDay_has_meal, {
+    MealHasFood.belongsTo(models.meal, {
       foreignKey: {
         allowNull: false,
       },

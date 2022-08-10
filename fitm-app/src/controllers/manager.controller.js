@@ -1,4 +1,5 @@
 const db = require("../models");
+const { flatten } = require("../utils");
 const Employee = db.employee;
 const Manager = db.manager;
 const Image = db.image;
@@ -336,6 +337,91 @@ exports.getManager = async (req, res) => {
     return res.status(200).json({
       success: true,
       manager,
+    });
+  } catch (err) {
+    return res.status(500).json({
+      success: false,
+      message: err.message,
+    });
+  }
+};
+
+exports.getDashboardData = async (req, res) => {
+  try {
+    const userData = await User.findOne({
+      where: {
+        id: req.id,
+      },
+      attributes: ["name", "imageId"],
+      include: [
+        {
+          model: Image,
+          attributes: ["path"],
+        },
+      ],
+    });
+
+    console.log("USER DATA: ", userData.toJSON());
+
+    const employeeCount = await Employee.count({
+      col: "managerId",
+      where: { managerId: req.managerId },
+    });
+    console.log("EMPLOYEE COUNT: ", employeeCount);
+    const yourGymsCount = await getYourGyms(req.managerId);
+    console.log("yourGymsCount: ", yourGymsCount);
+    const yourGyms = await Gym.findAll({
+      attributes: ["id", "name"],
+      where: {
+        managerId: req.managerId,
+      },
+    });
+    console.log("Your Gyms: ", yourGyms);
+    let gymImage = null;
+    if (yourGyms.length !== 0) {
+      gymImage = await Image.findOne({
+        attributes: ["path"],
+        where: {
+          gymId: yourGyms[0]?.id,
+        },
+      });
+    }
+    const memberships = await Membership.findAll({
+      attributes: ["fee"],
+      where: {
+        gymId: yourGymsCount,
+      },
+      include: [
+        {
+          model: Gym,
+          attributes: [["name", "gym"]],
+        },
+        {
+          model: Client,
+          attributes: ["userId"],
+          include: [
+            {
+              model: User,
+              attributes: ["name"],
+            },
+          ],
+        },
+      ],
+      limit: 3,
+    });
+    const membershipCount = await Membership.count({
+      col: "gymId",
+      where: { gymId: yourGymsCount },
+    });
+
+    return res.status(200).json({
+      success: true,
+      userData: userData,
+      employeeCount: employeeCount,
+      membershipCount: membershipCount,
+      memberships: flatten.flattenArrayObjects(memberships),
+      myGyms: yourGyms,
+      gymImage: gymImage,
     });
   } catch (err) {
     return res.status(500).json({

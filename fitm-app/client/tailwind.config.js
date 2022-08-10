@@ -1,3 +1,5 @@
+const defaultTheme = require("tailwindcss/defaultTheme");
+
 module.exports = {
   mode: "jit",
   darkMode: "class",
@@ -7,6 +9,7 @@ module.exports = {
       fontFamily: {
         poppins: ["Poppins", "sans-serif"],
         inter: ["Inter", "sans-serif"],
+        sans: ["Poppins", ...defaultTheme.fontFamily.sans],
       },
       colors: {
         primaryDark: "#1C1D1E", // #26282B #171717
@@ -15,10 +18,14 @@ module.exports = {
         darkerWhite: "#C4C4C4",
         accentGray: "#5e6063",
         primaryBlue: "#1B9CFC",
-        primaryGreen: "#00BFA6",
+        primaryGreen: "#00FF85",
+        accentGreen: "#25F792",
         primaryYellow: "#FDFF90",
+        primaryPink: "#F19AFF",
+        accentPink: "#f8ccff",
         accentBlue: "#25CCF7",
         testColor: "#393939",
+        accentTestColor: "#464646",
         primaryWhite: "#F3F3F3",
         accentWhite: "#ededed",
         primaryBgWhite: "#ffffff",
@@ -31,7 +38,8 @@ module.exports = {
         "10p": "10%",
       },
       dropShadow: {
-        solid: "1px 1px 0 black",
+        solidSm: "1px 1px 0 black",
+        solidMd: "3px 4px 0 black",
       },
     },
   },

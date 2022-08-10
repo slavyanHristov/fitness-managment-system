@@ -41,7 +41,7 @@ module.exports = (sequelizeConn, DataTypes) => {
     switch (membership_type) {
       case 1:
         membershipFee *= 0.1;
-        endDate.setSeconds(endDate.getSeconds() + 10 * 60);
+        endDate.setSeconds(endDate.getSeconds() + 30 * 60);
         // endDate.setHours(endDate.getHours() + 24);
         break;
       case 2:
@@ -147,6 +147,14 @@ module.exports = (sequelizeConn, DataTypes) => {
 
   Membership.verifyEndDate = (membership) => {
     return membership.end_date.getTime() < new Date().getTime();
+  };
+
+  Membership.setToExpired = async (membership) => {
+    membership.status = "expired";
+    await membership.save().catch(() => {
+      throw new Error("Something went wrong with Membership update!");
+    });
+    return;
   };
 
   Membership.associate = (models) => {

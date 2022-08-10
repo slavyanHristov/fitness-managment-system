@@ -4,6 +4,9 @@ class AdminAPI {
   getGyms() {
     return ProtectedAPI().get("/admin/gyms");
   }
+  getDashboardData() {
+    return ProtectedAPI().get("/admin/dashboard-data");
+  }
   registerManager(user) {
     return ProtectedAPI().post("/register/users/manager", user);
   }

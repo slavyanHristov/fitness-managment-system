@@ -5,7 +5,7 @@ defineEmits(["update:inputValue"]);
 <template>
   <div id="search-section" class="w-full h-full">
     <div
-      class="flex items-center p-2.5 justify-center w-full h-full rounded-lg bg-testColor"
+      class="flex items-center p-2.5 justify-center w-full h-full rounded-lg"
     >
       <div class="relative">
         <div

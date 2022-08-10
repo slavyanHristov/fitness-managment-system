@@ -18,7 +18,7 @@ const toastMsg = ref("");
 let redirectTimer = null;
 
 let search = ref("");
-const coverImg = ref("../src/assets/images/gyms-cover2.jpg");
+const coverImg = ref("../src/assets/images/clients-cover.jpg");
 
 const showToastAndRedirect = (message, pageToRedirect) => {
   toastMsg.value = message;
@@ -61,10 +61,29 @@ let filteredClients = computed(() => {
     </Toast>
     <AllGymsSkeleton v-if="noCollection" />
     <div v-else class="w-full">
-      <CoverImage :img-path="coverImg" title-text="Your Clients" />
+      <CoverImage :img-path="coverImg" title-text="Your Clients">
+        <template #header>
+          <header
+            class="flex flex-col justify-end w-full bg-[left_calc(0%)_top_calc(50%)] bg-no-repeat bg-cover h-64"
+            :style="{
+              'background-image':
+                'linear-gradient(rgba(27, 154, 252, 0.600), rgba(37, 205, 247, 0.600)) ,url(' +
+                coverImg +
+                ')',
+            }"
+          >
+            <h1
+              class="ml-8 text-5xl font-bold text-white uppercase drop-shadow-solidSm"
+            >
+              Your Clients
+            </h1>
+          </header>
+        </template>
+      </CoverImage>
       <SearchFilter
         v-model:inputValue="search"
-        placeholder-val="Search employees..."
+        class="my-5"
+        placeholder-val="Search clients..."
       />
       <GridContainer
         :collection="clientsCollection"

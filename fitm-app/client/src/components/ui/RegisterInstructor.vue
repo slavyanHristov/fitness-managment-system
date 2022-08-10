@@ -270,33 +270,66 @@ onUnmounted(() => {
         <SuccessIcon v-if="toastType === 'success'" />
       </template>
     </Toast>
-    <div class="container h-full">
-      <div class="flex items-center justify-center min-h-screen">
-        <div
-          class="w-full max-w-3xl rounded-sm bg-accentWhite dark:bg-accentDark"
+    <MultiStepSkeleton v-if="noGyms" />
+    <div
+      v-else
+      id="grid-container"
+      class="grid w-10/12 grid-cols-1 lg:grid-cols-2"
+    >
+      <div
+        id="cover"
+        class="hidden lg:flex flex-col items-center justify-center min-h-[80vh]"
+      >
+        <h1
+          class="text-3xl font-bold uppercase xl:text-4xl text-primaryWhite drop-shadow-solidMd"
         >
-          <MultiStepSkeleton v-if="noGyms" />
-          <MultiStepForm
-            v-else
-            :vuelidate="v$"
-            :db-errors="errors"
-            :fields="user"
-            :steps="steps"
-            @on-submit="createInstructor"
-          >
-            <template #resultMessage>
-              <div>
-                <div
-                  v-if="errorMessage"
-                  class="text-xs text-center text-red-500 font-inter"
-                >
-                  {{ errorMessage }}
-                </div>
+          Register Instructor
+        </h1>
+        <p
+          class="w-10/12 mt-3 text-sm text-center text-primaryWhite drop-shadow-solidSm"
+        >
+          Instructor's priority is to increase the healthy lifestyle of our
+          clients.
+        </p>
+      </div>
+      <div
+        id="form"
+        class="flex flex-col items-center justify-center rounded-lg bg-accentWhite dark:bg-accentDark"
+      >
+        <h1 class="block mt-3 font-bold uppercase lg:hidden">
+          Register Instructor
+        </h1>
+        <MultiStepForm
+          :vuelidate="v$"
+          :db-errors="errors"
+          :fields="user"
+          :steps="steps"
+          @on-submit="createInstructor"
+        >
+          <template #resultMessage>
+            <div>
+              <div
+                v-if="errorMessage"
+                class="text-xs text-center text-red-500 font-inter"
+              >
+                {{ errorMessage }}
               </div>
-            </template>
-          </MultiStepForm>
-        </div>
+            </div>
+          </template>
+        </MultiStepForm>
       </div>
     </div>
   </main>
 </template>
+
+<style scoped>
+#cover {
+  background-image: linear-gradient(
+      rgba(27, 154, 252, 0.1),
+      rgba(37, 205, 247, 0.1)
+    ),
+    url("@/assets/images/instructor-registration.jpg");
+  background-size: cover;
+  background-position: center;
+}
+</style>

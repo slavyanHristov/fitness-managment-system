@@ -6,6 +6,7 @@ import Spinner from "@/components/ui/Spinner.vue";
 import Modal from "@/components/ui/Modal.vue";
 import CreateWorkout from "@/components/ui/instructor-components/CreateWorkout.vue";
 import WorkoutContainer from "@/components/ui/instructor-components/WorkoutContainer.vue";
+import MainButton from "@/components/ui/MainButton.vue";
 
 const route = useRoute();
 const router = useRouter();
@@ -65,11 +66,20 @@ onMounted(async () => {
         @refresh-items="getRoutine"
       />
     </Modal>
-    <div v-if="routineData" class="flex flex-col items-center justify-center">
-      <h1>{{ routineData.name }}</h1>
-      <button @click="isModalOpen = true">Create Workout</button>
+    <div
+      v-if="routineData"
+      class="flex flex-col items-center justify-center gap-8"
+    >
+      <h1 class="mt-16 text-3xl font-bold uppercase md:text-5xl">
+        {{ routineData.name }}
+      </h1>
+      <MainButton
+        class="w-1/2"
+        button-text="Create Workout"
+        @click="isModalOpen = true"
+      />
       <WorkoutContainer
-        class="w-11/12"
+        class="w-11/12 my-12"
         :collection="routineData.workouts"
         @refrest-items="getRoutine"
       />

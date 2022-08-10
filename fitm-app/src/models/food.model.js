@@ -7,30 +7,26 @@ module.exports = (sequelizeConn, DataTypes) => {
         primaryKey: true,
         autoIncrement: true,
       },
-      name: {
-        type: DataTypes.STRING(45),
-        allowNull: false,
-      },
-      calories: {
+      total_calories: {
         type: DataTypes.FLOAT(11),
         allowNull: false,
       },
-      protein: {
+      total_protein: {
         type: DataTypes.FLOAT(6),
         allowNull: false,
       },
-      carbohydrates: {
+      total_carbohydrates: {
         type: DataTypes.FLOAT(6),
         allowNull: false,
       },
-      fats: {
+      total_fats: {
         type: DataTypes.FLOAT(6),
         allowNull: false,
       },
-      //TODO: Separate Table?
       quantity: {
         type: DataTypes.FLOAT(6),
         allowNull: false,
+        defaultValue: 1,
       },
     },
     {
@@ -49,24 +45,22 @@ module.exports = (sequelizeConn, DataTypes) => {
   };
 
   Food.associate = (models) => {
-    Food.belongsTo(models.food_type, {
+    Food.belongsTo(models.food_info, {
       onDelete: "cascade",
       onUpdate: "cascade",
     });
-    Food.belongsToMany(models.eatingDay_has_meal, {
+    Food.belongsToMany(models.meal, {
       through: models.meal_has_food,
       onDelete: "cascade",
       onUpdate: "cascade",
     });
+
     Food.hasMany(models.meal_has_food, {
       foreignKey: {
         allowNull: false,
       },
       onDelete: "cascade",
       onUpdate: "cascade",
-    });
-    Food.belongsTo(models.image, {
-      onDelete: "cascade",
     });
   };
   return Food;

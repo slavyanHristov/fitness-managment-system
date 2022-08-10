@@ -185,10 +185,10 @@ const registerAction = async () => {
 </script>
 
 <template>
-  <main class="flex items-center justify-center w-full min-h-screen">
+  <main class="flex items-center justify-center min-w-full min-h-screen">
     <div
-      id="split-screen"
-      class="box-border flex items-center justify-center w-4/5 rounded-md h-[600px] bg-primaryBgWhite dark:bg-accentDark"
+      id="grid-container"
+      class="grid grid-cols-1 lg:grid-cols-2 bg-primaryBgWhite dark:bg-accentDark"
     >
       <div id="left" class="hidden w-full h-full lg:flex rounded-l-md">
         <div
@@ -202,8 +202,9 @@ const registerAction = async () => {
               Manager Registration
             </h1>
           </div>
-          <p class="text-center text-primaryGray">
-            Lorem ipsum dolor sit amet consectetur adipisicing elit. Harum, non!
+          <p class="w-10/12 text-center text-primaryGray">
+            Managers are responsible for gyms that they're assigned to and their
+            employees.
           </p>
         </div>
       </div>
@@ -231,7 +232,7 @@ const registerAction = async () => {
             >
               {{ successMessage }}
             </div>
-            <MainButton class="mt-8" button-text="Register Manager" />
+            <MainButton class="mt-6" button-text="Register Manager" />
           </div>
         </form>
       </div>

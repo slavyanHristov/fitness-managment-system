@@ -2,7 +2,7 @@
 import { ref, onMounted, computed } from "vue";
 import InstructorService from "@/services/API-calls/InstructorService";
 import useVuelidate from "@vuelidate/core";
-import { required, helpers } from "@vuelidate/validators";
+import { required, helpers, between, integer } from "@vuelidate/validators";
 
 import SearchFilter from "../SearchFilter.vue";
 import InputField from "../InputField.vue";
@@ -13,6 +13,8 @@ const props = defineProps(["workoutId"]);
 const emit = defineEmits(["closeModal", "refreshItems"]);
 const exercisesCollection = ref(null);
 const search = ref("");
+
+const headerCollection = ref(["Exercise", "Muscle"]);
 
 const recordData = ref({
   sets: null,
@@ -25,9 +27,19 @@ const rules = computed(() => {
   return {
     sets: {
       required: helpers.withMessage("Field cannot be empty", required),
+      between: helpers.withMessage(
+        "Value must be betweeen (1,20)",
+        between(1, 20)
+      ),
+      integer: helpers.withMessage("Must be an integer!", integer),
     },
     reps: {
       required: helpers.withMessage("Field cannot be empty", required),
+      between: helpers.withMessage(
+        "Value must be between (1,30)",
+        between(1, 30)
+      ),
+      integer: helpers.withMessage("Must be an integer!", integer),
     },
   };
 });
@@ -58,6 +70,7 @@ const addExerciseToWorkout = async (exerciseId) => {
       );
       console.log(response);
       emit("refreshItems");
+      emit("closeModal");
       console.log("Exercise ID", exerciseId);
     }
   } catch (err) {
@@ -71,31 +84,32 @@ onMounted(async () => {
 </script>
 
 <template>
-  <div v-if="exercisesCollection">
-    <h1>HERE I ADD EXERCISES</h1>
+  <div v-if="exercisesCollection" class="bg-primaryBgWhite dark:bg-accentDark">
     <SearchFilter
       v-model:inputValue="search"
       placeholder-val="Search exercises..."
     />
-    <InputField
-      v-model:inputContent="recordData.sets"
-      input-type="number"
-      input-id="sets"
-      :vuelidate-errors="v$.sets.$errors"
-      label-text="Number of sets"
-    />
-    <InputField
-      v-model:inputContent="recordData.reps"
-      input-type="number"
-      input-id="reps"
-      :vuelidate-errors="v$.reps.$errors"
-      label-text="Number of repetitions"
-    />
-    <p class="mb-5">{{ props.workoutId }}</p>
+    <div class="flex items-center justify-center gap-2 bg-inherit">
+      <InputField
+        v-model:inputContent="recordData.sets"
+        input-type="number"
+        input-id="sets"
+        :vuelidate-errors="v$.sets.$errors"
+        label-text="Sets"
+      />
+      <InputField
+        v-model:inputContent="recordData.reps"
+        input-type="number"
+        input-id="reps"
+        :vuelidate-errors="v$.reps.$errors"
+        label-text="Repetitions"
+      />
+    </div>
     <ListView
       :collection="exercisesCollection"
       :filtered-collection="filteredCollection"
       :item-id="props.workoutId"
+      :header-collection="headerCollection"
       @on-selected-item="addExerciseToWorkout"
     />
   </div>

@@ -4,6 +4,9 @@ class InstructorAPI {
   createRoutine(routineData) {
     return ProtectedAPI().post("/instructor/routines/create", routineData);
   }
+  getDashboardData() {
+    return ProtectedAPI().get("/instructor/dashboard-data");
+  }
   getYourRoutines() {
     return ProtectedAPI().get("/instructor/routines");
   }
@@ -39,6 +42,12 @@ class InstructorAPI {
   }
   testingFind() {
     return ProtectedAPI().get("/instructor/find-bulk");
+  }
+  createMealPlan(mealPlanData) {
+    return ProtectedAPI().post("/instructor/meal-plan/create", mealPlanData);
+  }
+  deleteExerciseFromWorkout(id) {
+    return ProtectedAPI().delete(`/instructor/routines/delete/exercise/${id}`);
   }
 }
 

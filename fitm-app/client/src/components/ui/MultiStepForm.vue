@@ -61,8 +61,8 @@ const previousStep = () => {
 </script>
 
 <template>
-  <div>
-    <div id="form-container" class="px-6 py-8">
+  <div class="w-full">
+    <div id="form-container" class="w-full px-6 py-8">
       <form class="" enctype="multipart/form-data" @submit.prevent="">
         <FormStepsIndicator
           class="w-4/5 m-auto mb-12"

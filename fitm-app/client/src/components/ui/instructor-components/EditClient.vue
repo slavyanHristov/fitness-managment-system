@@ -9,7 +9,7 @@ import ComboBox from "../ComboBox.vue";
 import parsePayload from "@/utils/parsePayload";
 
 const props = defineProps(["itemData"]);
-const emit = defineEmits(["refreshData"]);
+const emit = defineEmits(["refreshData", "closeModal"]);
 const foundItemData = ref(props.itemData);
 const clientId = foundItemData.value.id;
 const routines = ref(null);
@@ -93,6 +93,7 @@ const editAction = async () => {
         parsePayload(clientFields.value)
       );
       emit("refreshData");
+      emit("closeModal");
       console.log(response);
     }
   } catch (err) {
@@ -102,7 +103,7 @@ const editAction = async () => {
 
 onMounted(async () => {
   await getYourRoutines();
-  console.log(foundItemData.value.routineId);
+  console.log("CLIENT: ", clientId);
 });
 </script>
 <template>

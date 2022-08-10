@@ -6,14 +6,7 @@ module.exports = (sequelizeConn, DataTypes) => {
         type: DataTypes.INTEGER,
         primaryKey: true,
         autoIncrement: true,
-      },
-      name: {
-        type: DataTypes.STRING(45),
         allowNull: false,
-      },
-      description: {
-        type: DataTypes.TEXT,
-        allowNull: true,
       },
     },
     {
@@ -22,29 +15,24 @@ module.exports = (sequelizeConn, DataTypes) => {
     }
   );
 
-  Meal.findMeal = async (mealId) => {
-    const foundMeal = await Meal.findOne({
-      where: {
-        id: mealId,
-      },
-    });
-    return foundMeal;
-  };
-
   Meal.associate = (models) => {
-    Meal.belongsToMany(models.eating_day, {
-      through: models.eatingDay_has_meal,
+    Meal.belongsTo(models.eating_day, {
       onDelete: "cascade",
       onUpdate: "cascade",
     });
-    Meal.hasMany(models.eatingDay_has_meal, {
-      foreignKey: {
-        allowNull: false,
-      },
+    Meal.belongsTo(models.meal_type, {
+      onDelete: "cascade",
+      onUpdate: "cascade",
+    });
+    Meal.belongsToMany(models.food, {
+      through: models.meal_has_food,
+      onDelete: "cascade",
+      onUpdate: "cascade",
+    });
+    Meal.hasMany(models.meal_has_food, {
       onDelete: "cascade",
       onUpdate: "cascade",
     });
   };
-
   return Meal;
 };

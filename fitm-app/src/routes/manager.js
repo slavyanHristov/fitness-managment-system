@@ -45,4 +45,10 @@ router.get(
   controller.getManager
 );
 
+router.get(
+  "/get/dashboard-data",
+  [authJwt.verifyToken, authJwt.isManager],
+  controller.getDashboardData
+);
+
 module.exports = router;

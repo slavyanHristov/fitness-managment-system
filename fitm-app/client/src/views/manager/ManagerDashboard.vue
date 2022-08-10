@@ -1,19 +1,21 @@
 <script setup>
-import { onMounted, ref } from "vue";
-import { useRouter } from "vue-router";
-import { useAuthStore } from "@/stores/authStore";
+import { onMounted, ref, onErrorCaptured } from "vue";
 import UserService from "@/services/API-calls/UserService";
 import Modal from "@/components/ui/Modal.vue";
+import ManagerDashboardData from "@/components/ui/manager-components/ManagerDashboardData.vue";
 import FinalizeAccount from "@/components/ui/FinalizeAccount.vue";
+import MultiStepSkeleton from "@/components/skeleton-loaders/MultiStepSkeleton.vue";
 
-const router = useRouter();
-const authStore = useAuthStore();
+const err = ref(null);
 
 const isModalOpen = ref(false);
-//get logged in userId from localStorage or pinia store
-const userId = authStore.getCurrentUser.userId;
 const userData = ref(null);
-console.log(userId);
+
+onErrorCaptured((e) => {
+  err.value = e;
+  return true;
+});
+
 const isUserFinalized = async () => {
   try {
     const res = await UserService.getNewUser();
@@ -48,17 +50,17 @@ onMounted(async () => {
         @close-modal="isModalOpen = !isModalOpen"
       />
     </Modal>
+
     <div class="flex flex-col gap-4">
-      <h1 class="text-center text-red-500">Manager Dashboard</h1>
-      <button @click="router.push({ name: 'registerInstructor' })">
-        Register Instructor
-      </button>
-      <button @click="router.push({ name: 'registerEmployee' })">
-        Register Employee
-      </button>
-      <button @click="router.push({ name: 'employeesView' })">
-        My Employees
-      </button>
+      <div v-if="err">
+        <MultiStepSkeleton />
+      </div>
+      <Suspense>
+        <template #default>
+          <ManagerDashboardData />
+        </template>
+        <template #fallback><MultiStepSkeleton /></template>
+      </Suspense>
     </div>
   </div>
 </template>

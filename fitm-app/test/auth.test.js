@@ -1,17 +1,11 @@
 const createServer = require("../src/app");
 const dbOperations = require("../src/utils/db-operations");
 const supertest = require("supertest");
-const db = require("../src/models");
+const { adminPayload } = require("./mocks/mockData");
+// const db = require("../src/models");
 const app = createServer();
 
-const User_Type = db.user_type;
-
-const adminPayload = {
-  username: "admin_13",
-  password: "myPass_123",
-  email: "admin3@example.com",
-  userTypeId: 1,
-};
+// const User_Type = db.user_type;
 
 describe("Test admin registration.", () => {
   beforeAll(async () => {
@@ -19,25 +13,24 @@ describe("Test admin registration.", () => {
   });
 
   test("should register an admin", async () => {
-    await User_Type.create({ name: "admin" });
-
     await supertest(app)
-      .post("/api/users/admin")
+      .post("/api/register/users/admin")
       .send(adminPayload)
-      .expect(200);
+      .expect(201);
   });
 
   describe("Test admin login.", () => {
     test("should login admin and access protected admin route", async () => {
       const username = adminPayload.username;
+      const rememberUser = false;
       const password = adminPayload.password;
       const { body, statusCode } = await supertest(app)
-        .post("/api/users/login")
-        .send({ username, password });
+        .post("/api/auth/login")
+        .send({ username, rememberUser, password });
       expect(statusCode).toBe(200);
 
       await supertest(app)
-        .get("/api/test/admin")
+        .get("/api/admin/dashboard-data")
         .expect(200)
         .set("authorization", `Bearer ${body.accessToken}`);
     });
@@ -47,7 +40,7 @@ describe("Test admin registration.", () => {
 
     test("route shouldn't be accessed", async () => {
       const response = await supertest(app)
-        .get("/api/test/admin")
+        .get("/api/admin/dashboard-data")
         .expect(401)
         .set("authorization", `Bearer ${invalidToken}`);
       expect(response.body).toMatchObject({

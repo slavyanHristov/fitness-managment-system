@@ -2,14 +2,14 @@ const db = require("../models");
 const { getValidationErrors, flatten } = require("../utils");
 
 const sequelize = db.sequelize;
-const Food = db.food;
+const FoodInfo = db.food_info;
 const FoodType = db.food_type;
 const MealPlan = db.meal_plan;
 const FitnessInstructor = db.fitness_instructor;
 const EatingDay = db.eating_day;
-const Meal = db.meal;
+const MealType = db.meal_type;
 const MealHasFood = db.meal_has_food;
-const EatingDayHasMeal = db.eatingDay_has_meal;
+const Meal = db.meal;
 const DayOfWeek = db.day_of_week;
 const Client = db.client;
 // -------------- Routine Part --------------
@@ -52,7 +52,7 @@ exports.postFood = async (req, res) => {
     });
   }
   try {
-    const food = await Food.create({
+    const food = await FoodInfo.create({
       name,
       calories,
       protein,
@@ -74,47 +74,6 @@ exports.postFood = async (req, res) => {
     });
   }
 };
-
-// -------------- Create Meal_Plan --------------
-// exports.createMealPlan = async (req, res) => {
-//   const { name, description } = req.body;
-
-//   if (!name) {
-//     return res.status(404).json({
-//       success: false,
-//       message: "Please enter name for the meal plan!",
-//     });
-//   }
-
-//   const loggedInstructor = await FitnessInstructor.getInstructor(
-//     req.instructorId
-//   );
-//   if (!loggedInstructor) {
-//     return res.status(404).json({
-//       success: false,
-//       message: "Instructor does not exist!",
-//     });
-//   }
-
-//   try {
-//     const mealPlan = await MealPlan.create({
-//       name,
-//       description,
-//       fitnessInstructorId: loggedInstructor.id,
-//     });
-//     //TODO: After meal plan creation assign it to client, which has chosen you!
-//     return res.status(200).json({
-//       success: true,
-//       message: "Created meal plan successfully!",
-//       mealPlan,
-//     });
-//   } catch (err) {
-//     return res.status(500).json({
-//       success: false,
-//       message: err.message,
-//     });
-//   }
-// };
 
 // -------------- Create Eating_day --------------
 exports.createEatingDay = async (req, res) => {
@@ -167,7 +126,7 @@ exports.createEatingDay = async (req, res) => {
 // -------------- Get All Meals --------------
 exports.getAllMeals = async (req, res) => {
   try {
-    const allMeals = await Meal.findAll();
+    const allMeals = await MealType.findAll();
 
     if (allMeals.length === 0) {
       return res.status(200).json({
@@ -192,7 +151,7 @@ exports.getAllMeals = async (req, res) => {
 exports.getFoods = async (req, res) => {
   const { search } = req.query;
   try {
-    let foods = await Food.findAll();
+    let foods = await FoodInfo.findAll();
 
     if (search) {
       foods = foods.filter((food) => {
@@ -231,8 +190,8 @@ exports.createMealFood = async (req, res) => {
   }
 
   try {
-    const foundFood = await Food.findFood(foodId);
-    const foundMeal = await Meal.findMeal(mealId);
+    const foundFood = await FoodInfo.findFood(foodId);
+    const foundMeal = await MealType.findMeal(mealId);
     if (!foundFood || !foundMeal) {
       return res.status(404).json({
         success: false,
@@ -261,10 +220,10 @@ exports.createMealFood = async (req, res) => {
 // ------------- Get all foods which are posted by instructor in meals -------------
 exports.getFoodsInMeals = async (req, res) => {
   try {
-    const allFoods = await Meal.findAll({
+    const allFoods = await MealType.findAll({
       include: [
         {
-          model: Food,
+          model: FoodInfo,
           attributes: [
             "name",
             "calories",
@@ -328,7 +287,7 @@ exports.postMealFood_EatingDay = async (req, res) => {
       });
     }
 
-    const eatingDayHasMealFood = await EatingDayHasMealFood.create({
+    const eatingDayHasMealFood = await Meal.create({
       mealHasFoodId: foundMealHasFood.id,
       eatingDayId: foundEatingDay.id,
     });
@@ -384,7 +343,7 @@ exports.getMealPlan = async (req, res) => {
               attributes: ["name"],
             },
             {
-              model: Food,
+              model: FoodInfo,
             },
           ],
           through: {
@@ -540,7 +499,7 @@ exports.testingBulk = async (req, res) => {
       },
     ]);
 
-    await Meal.bulkCreate([
+    await MealType.bulkCreate([
       {
         name: "Breakfast",
       },
@@ -574,14 +533,13 @@ exports.testingBulk = async (req, res) => {
     ]);
 
     //TODO: Should add images as well
-    await Food.bulkCreate([
+    await FoodInfo.bulkCreate([
       {
         name: "Pork Steak",
         calories: 300,
         protein: 27.5,
         carbohydrates: 36.1,
         fats: 61,
-        quantity: 1,
         foodTypeId: 3,
         imageId: images[3].id,
       },
@@ -591,7 +549,6 @@ exports.testingBulk = async (req, res) => {
         protein: 2.5,
         carbohydrates: 16.1,
         fats: 1,
-        quantity: 1,
         foodTypeId: 2,
         imageId: images[4].id,
       },
@@ -601,7 +558,6 @@ exports.testingBulk = async (req, res) => {
         protein: 4.5,
         carbohydrates: 26.1,
         fats: 8,
-        quantity: 1,
         foodTypeId: 2,
         imageId: images[5].id,
       },
@@ -719,7 +675,7 @@ exports.createMealPlan = async (req, res) => {
         },
       }
     );
-    const meals = await Meal.findAll();
+    const meals = await MealType.findAll();
     const daysOfWeek = await DayOfWeek.findAll();
 
     for (const day of daysOfWeek) {
@@ -728,9 +684,9 @@ exports.createMealPlan = async (req, res) => {
         dayOfWeekId: day.id,
       });
       for (const meal of meals) {
-        await EatingDayHasMeal.create({
+        await Meal.create({
           eatingDayId: eatingDay.id,
-          mealId: meal.id,
+          mealTypeId: meal.id,
         });
       }
     }
@@ -793,13 +749,13 @@ exports.testingFind = async (req, res) => {
                   model: DayOfWeek,
                 },
                 {
-                  model: EatingDayHasMeal,
+                  model: Meal,
                   include: [
                     {
-                      model: Meal,
+                      model: MealType,
                     },
                     {
-                      model: Food,
+                      model: FoodInfo,
                       include: [
                         {
                           model: FoodType,
@@ -1319,6 +1275,53 @@ exports.assignMealPlan = async (req, res) => {
   }
 };
 
+exports.getDashboardData = async (req, res) => {
+  try {
+    const userData = await User.findOne({
+      where: {
+        id: req.id,
+      },
+      attributes: ["name", "imageId"],
+      include: [
+        {
+          model: Image,
+          attributes: ["path"],
+        },
+      ],
+    });
+
+    const clients = await Client.findAll({
+      attributes: ["fitness_level", "weight", "userId"],
+      where: {
+        fitnessInstructorId: req.instructorId,
+      },
+      include: [
+        {
+          model: User,
+          attributes: ["name"],
+          include: [
+            {
+              model: Image,
+              attributes: ["path"],
+            },
+          ],
+        },
+      ],
+    });
+
+    return res.status(200).json({
+      success: true,
+      userData: userData,
+      collection: flatten.flattenArrayObjects(clients),
+    });
+  } catch (err) {
+    return res.status(500).json({
+      success: false,
+      message: err.message,
+    });
+  }
+};
+
 exports.getYourClients = async (req, res) => {
   try {
     const clients = await Client.findAll({
@@ -1329,7 +1332,7 @@ exports.getYourClients = async (req, res) => {
       include: [
         {
           model: User,
-          attributes: ["id", "name"],
+          attributes: ["name"],
           include: [
             {
               model: Image,
@@ -1368,6 +1371,7 @@ exports.editClient = async (req, res) => {
         id: clientId,
       },
     });
+    console.log("THE CLIENT:", client);
     if (client.fitnessInstructorId !== req.instructorId) {
       return res.status(400).json({
         success: false,
@@ -1388,6 +1392,27 @@ exports.editClient = async (req, res) => {
       success: true,
       message: "Client updated successfully!",
       updatedClient,
+    });
+  } catch (err) {
+    return res.status(500).json({
+      success: false,
+      message: err.message,
+    });
+  }
+};
+
+exports.deleteExerciseFromWorkout = async (req, res) => {
+  const exerciseHasWorkoutId = req.params.id;
+  try {
+    await ExerciseHasWorkout.destroy({
+      where: {
+        id: exerciseHasWorkoutId,
+      },
+    });
+
+    return res.status(200).json({
+      success: true,
+      message: "Exercise removed from workout.",
     });
   } catch (err) {
     return res.status(500).json({

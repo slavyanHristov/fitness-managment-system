@@ -11,6 +11,11 @@ router.get(
   controller.getAllManagers
 );
 router.get(
+  "/dashboard-data",
+  [authJwt.verifyToken, authJwt.isAdmin],
+  controller.getDashboardData
+);
+router.get(
   "/manager/:id",
   [authJwt.verifyToken, authJwt.isAdmin],
   controller.getOneManager

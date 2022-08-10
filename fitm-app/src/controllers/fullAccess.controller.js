@@ -8,6 +8,7 @@ const Country = db.country;
 const Manager = db.manager;
 const User = db.user;
 const Employee = db.employee;
+const Routine = db.routine;
 const FitnessInstructor = db.fitness_instructor;
 
 const gymInnerJoins = [
@@ -152,6 +153,26 @@ exports.getAllInstructors = async (req, res) => {
     return res.status(200).json({
       success: true,
       collection: instructors,
+    });
+  } catch (err) {
+    return res.status(500).json({
+      success: false,
+      message: err.message,
+    });
+  }
+};
+
+exports.getDataCount = async (req, res) => {
+  try {
+    const routinesCount = await Routine.count();
+    const gymsCount = await Gym.count();
+    const instructorsCount = await FitnessInstructor.count();
+
+    return res.status(200).json({
+      success: true,
+      routinesCount: routinesCount,
+      gymsCount: gymsCount,
+      instructorsCount: instructorsCount,
     });
   } catch (err) {
     return res.status(500).json({

@@ -10,6 +10,9 @@ class FullAccessAPI {
   getAllInstructors() {
     return API().get("/fullAccess/instructors");
   }
+  getDataCount() {
+    return API().get("/fullAccess/data-count");
+  }
 }
 
 export default new FullAccessAPI();

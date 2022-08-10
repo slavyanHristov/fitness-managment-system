@@ -1,7 +1,8 @@
 <script setup>
 import { useRouter } from "vue-router";
 import SkewedButton from "@/components/ui/SkewedButton.vue";
-
+import CounterSection from "@/components/ui/home-components/CounterSection.vue";
+import JoinUsSection from "@/components/ui/home-components/JoinUsSection.vue";
 const router = useRouter();
 </script>
 
@@ -50,6 +51,17 @@ const router = useRouter();
           alt="Athlete"
         />
       </div>
+    </section>
+    <section class="w-full bg-primaryWhite dark:bg-primaryDark">
+      <Suspense>
+        <template #default>
+          <CounterSection />
+        </template>
+        <template #fallback> Loading... </template>
+      </Suspense>
+    </section>
+    <section class="min-h-screen">
+      <JoinUsSection />
     </section>
   </div>
 </template>

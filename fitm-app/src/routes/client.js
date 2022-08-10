@@ -24,6 +24,11 @@ router.get(
   controller.getInstructorsInGym
 );
 router.get(
+  "/dashboard-data",
+  [authJwt.verifyToken, authJwt.isClient],
+  controller.getDashboardData
+);
+router.get(
   "/routine",
   [authJwt.verifyToken, authJwt.isClient],
   controller.getRoutine
@@ -47,6 +52,11 @@ router.post(
   "/mealPlan/add/food",
   [authJwt.verifyToken, authJwt.isClient],
   controller.addFoodToMeal
+);
+router.delete(
+  "/mealPlan/delete/food/:id",
+  [authJwt.verifyToken, authJwt.isClient],
+  controller.deleteFoodFromMeal
 );
 
 router.get("/success", controller.paymentSuccess);

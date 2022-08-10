@@ -93,6 +93,23 @@ module.exports = (sequelizeConn, DataTypes) => {
     }
   );
 
+  Client.resetMembershipExtras = async (client) => {
+    if (
+      client.fitnessInstructorId !== null ||
+      client.routineId !== null
+      // || client.mealPlanId !== null
+    ) {
+      client.fitnessInstructorId = null;
+      client.routineId = null;
+      // client.mealPlanId = null;
+      await client.save().catch(() => {
+        throw new Error("Something went wrong with client update!");
+      });
+      return;
+    }
+    return;
+  };
+
   Client.associate = (models) => {
     Client.hasMany(models.membership, {
       onDelete: "cascade",
@@ -121,7 +138,7 @@ module.exports = (sequelizeConn, DataTypes) => {
     //   onUpdate: "cascade",
     // });
     Client.belongsTo(models.meal_plan, {
-      onDelete: "cascade",
+      // onDelete: "cascade",
       onUpdate: "cascade",
     });
     Client.belongsTo(models.routine, {

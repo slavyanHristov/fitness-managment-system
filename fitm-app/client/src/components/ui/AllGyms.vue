@@ -69,9 +69,22 @@ let filteredGyms = computed(() => {
 
 <template>
   <div class="w-full">
-    <CoverImage :img-path="coverImg" title-text="Fit/m Gyms" />
+    <CoverImage>
+      <template #header>
+        <header
+          class="flex flex-col justify-end w-full bg-[left_calc(0%)_top_calc(40%)] bg-no-repeat bg-cover h-64"
+          :style="{ 'background-image': 'url(' + coverImg + ')' }"
+        >
+          <h1
+            class="ml-8 text-5xl font-bold text-white uppercase drop-shadow-solidSm"
+          >
+            Fit/m Gyms
+          </h1>
+        </header>
+      </template>
+    </CoverImage>
     <div
-      class="grid grid-cols-1 gap-3 auto-rows-fr place-items-center p-2.5 m-5 rounded-lg lg:grid-cols-3 bg-accentDark"
+      class="grid grid-cols-1 gap-3 auto-rows-fr place-items-center p-2.5 m-5 rounded-lg lg:grid-cols-3 bg-primaryBgWhite dark:bg-accentDark"
     >
       <RangeFilter
         v-model:sliderValue="rangeSliderVal"

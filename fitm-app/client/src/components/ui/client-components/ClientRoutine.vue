@@ -60,18 +60,80 @@ await getYourRoutine();
     </Toast>
     <MultiStepSkeleton v-if="noRoutine" />
     <div v-else>
-      <h1>Routine here</h1>
-      <div class="flex gap-6 mb-5">
-        {{ routine.name }}
-        <span>{{ routine.fitness_instructor.user.name }}</span>
+      <div class="flex items-center justify-center gap-6 my-5">
+        <h1 class="font-bold uppercase">{{ routine.name }}</h1>
+        <h1 class="font-bold uppercase">
+          BY {{ routine.fitness_instructor.user.name }}
+        </h1>
       </div>
-      <div v-for="workout in routine.workouts" :key="workout.id" class="mb-6">
-        <div class="flex gap-4">
-          <p>{{ workout.name }}</p>
-          <p>{{ workout.day_of_week.name }}</p>
-          <p>{{ workout.workout_type.name }}</p>
-        </div>
+      <div class="flex flex-col items-center justify-center">
         <div
+          v-for="workout in routine.workouts"
+          :key="workout.id"
+          class="w-10/12 mb-6"
+        >
+          <div
+            class="flex w-full gap-4 px-6 py-2 rounded-t-lg bg-gradient-to-t from-primaryBlue to-accentBlue"
+          >
+            <h1 class="text-xl font-bold tracking-wider uppercase lg:text-3xl">
+              {{ workout.name }}
+            </h1>
+            <h1 class="text-xl font-bold tracking-wider uppercase lg:text-3xl">
+              {{ workout.day_of_week.name }}
+            </h1>
+            <h1 class="text-xl font-bold tracking-wider uppercase lg:text-3xl">
+              {{ workout.workout_type.name }}
+            </h1>
+          </div>
+          <table class="w-full overflow-hidden border-collapse">
+            <thead>
+              <tr
+                class="font-bold text-center bg-primaryWhite dark:bg-accentDark"
+              >
+                <td class="px-4 py-1"></td>
+                <td class="px-4 py-1"><p class="text-sm">Exercise Name</p></td>
+                <td class="px-4 py-1"><p class="text-sm">Muscle Group</p></td>
+                <td class="px-4 py-1"><p class="text-sm">Exercise Type</p></td>
+                <td class="px-4 py-1"><p class="text-sm">Sets</p></td>
+                <td class="px-4 py-1"><p class="text-sm">Reps</p></td>
+              </tr>
+            </thead>
+            <tbody>
+              <tr
+                v-for="exercise in workout.exercises"
+                :key="exercise.id"
+                class="text-center bg-accentWhite dark:bg-testColor"
+              >
+                <td class="px-4 py-2">
+                  <img
+                    class="min-w-14 min-h-14 h-14 w-14"
+                    :src="apiUrlPath + exercise.image.path"
+                    alt="Exercise Image"
+                  />
+                </td>
+                <td class="px-4 py-2">
+                  <p class="text-sm">{{ exercise.name }}</p>
+                </td>
+                <td class="px-4 py-2">
+                  <p class="text-sm">{{ exercise.muscle_group.name }}</p>
+                </td>
+                <td class="px-4 py-2">
+                  <p class="text-sm">{{ exercise.exercise_type.name }}</p>
+                </td>
+                <td class="px-4 py-2">
+                  <p class="text-sm">
+                    {{ exercise.exercise_has_workout.sets }}
+                  </p>
+                </td>
+                <td class="px-4 py-2">
+                  <p class="text-sm">
+                    {{ exercise.exercise_has_workout.reps }}
+                  </p>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+          <!-- <div
           v-for="exercise in workout.exercises"
           :key="exercise.id"
           class="flex items-center gap-4"
@@ -86,6 +148,7 @@ await getYourRoutine();
           <p>{{ exercise.exercise_type.name }}</p>
           <p>{{ exercise.exercise_has_workout.sets }}</p>
           <p>{{ exercise.exercise_has_workout.reps }}</p>
+        </div> -->
         </div>
       </div>
     </div>

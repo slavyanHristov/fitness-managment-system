@@ -121,7 +121,7 @@ const userDetails = computed(() => {
             />
           </div>
           <h1
-            class="mt-10 ml-64 text-3xl font-normal drop-shadow-solid text-primaryWhite md:text-5xl md:ml-96 font-poppins-normal"
+            class="mt-10 ml-64 text-3xl font-normal drop-shadow-solidSm text-primaryWhite md:text-5xl md:ml-96 font-poppins-normal"
           >
             {{ user.name }}
           </h1>

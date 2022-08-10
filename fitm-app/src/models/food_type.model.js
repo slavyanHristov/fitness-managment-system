@@ -19,7 +19,7 @@ module.exports = (sequelizeConn, DataTypes) => {
   );
 
   FoodType.associate = (models) => {
-    FoodType.hasMany(models.food, {
+    FoodType.hasMany(models.food_info, {
       onDelete: "cascade",
       onUpdate: "cascade",
     });

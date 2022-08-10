@@ -6,7 +6,7 @@ const { upload } = require("../middleware");
 //     SENDGRID_API_KEY,
 //     EMAIL
 // } = require("../../config/config")
-const { mailSender, getValidationErrors } = require("../utils");
+const { mailSender, getValidationErrors, flatten } = require("../utils");
 const fs = require("fs");
 const path = require("path");
 const User = db.user;
@@ -16,6 +16,8 @@ const Address = db.address;
 const City = db.city;
 const Country = db.country;
 const Image = db.image;
+const Employee = db.employee;
+const FitnessInstructor = db.fitness_instructor;
 
 const uploadsPath = "/resources/static/assets/uploads/";
 
@@ -311,6 +313,54 @@ exports.sendMailManager = async (req, res) => {
     success: true,
     message: "Message has been sent!",
   });
+};
+
+exports.getDashboardData = async (req, res) => {
+  try {
+    const gymsCount = await Gym.count();
+    const employees = await Employee.findAll({
+      attributes: ["id", "name", "position"],
+      order: [["createdAt", "DESC"]],
+      include: [
+        {
+          attributes: [["name", "gym"]],
+          model: Gym,
+        },
+        {
+          model: FitnessInstructor,
+          include: [
+            {
+              attributes: ["imageId"],
+              model: User,
+              include: [
+                {
+                  model: Image,
+                  attributes: ["path"],
+                },
+              ],
+            },
+          ],
+        },
+      ],
+      limit: 3, //TODO: Should i leave this?
+    });
+    // if (gymsCount === 0 || employees.length === 0) {
+    //   return res.status(404).json({
+    //     success: false,
+    //     message: "Nothing found.",
+    //   });
+    // }
+    return res.status(200).json({
+      success: true,
+      count: gymsCount,
+      collection: flatten.flattenArrayObjects(employees),
+    });
+  } catch (err) {
+    return res.status(500).json({
+      success: false,
+      message: err.message,
+    });
+  }
 };
 
 exports.sendMail = async (req, res) => {

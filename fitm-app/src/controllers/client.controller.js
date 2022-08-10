@@ -17,11 +17,12 @@ const Workout = db.workout;
 // const WeekDay = db.week_day;
 const DayOfWeek = db.day_of_week;
 const EatingDay = db.eating_day;
-const EatingDayHasMeal = db.eatingDay_has_meal;
-const MealHasFood = db.meal_has_food;
 const Meal = db.meal;
-const Food = db.food;
+const MealHasFood = db.meal_has_food;
+const MealType = db.meal_type;
+const FoodInfo = db.food_info;
 const FoodType = db.food_type;
+const Food = db.food;
 
 const MuscleGroup = db.muscle_group;
 const WorkoutType = db.workout_type;
@@ -208,6 +209,12 @@ exports.setInstructor = async (req, res) => {
       return res.status(400).json({
         success: false,
         message: "You don't have a valid membership to hire an instructor!",
+      });
+    }
+    if (loggedClient.fitnessInstructorId !== null) {
+      return res.status(400).json({
+        success: false,
+        message: "You already have an instructor!",
       });
     }
     loggedClient.fitnessInstructorId = instructor.id;
@@ -538,11 +545,26 @@ exports.getMembership = async (req, res) => {
         },
       ],
     });
+    if (!membership) {
+      return res.status(404).json({
+        success: false,
+        message: "Membership not found!",
+      });
+    }
+
     if (Membership.verifyEndDate(membership)) {
-      if (client.fitnessInstructorId !== null || client.routineId !== null) {
-        client.fitnessInstructorId = null;
-        client.routineId = null;
-        await client.save();
+      // if (client.fitnessInstructorId !== null || client.routineId !== null) {
+      //   client.fitnessInstructorId = null;
+      //   client.routineId = null;
+      //   await client.save();
+      // }
+      await Client.resetMembershipExtras(client);
+      if (client.mealPlanId !== null) {
+        await MealPlan.destroy({
+          where: {
+            id: client.mealPlanId,
+          },
+        });
       }
       // await Client.update(
       //   { fitnessInstructorId: null, routineId: null },
@@ -552,8 +574,10 @@ exports.getMembership = async (req, res) => {
       //     },
       //   }
       // );
-      membership.status = "expired";
-      await membership.save();
+      if (membership.status === "active")
+        await Membership.setToExpired(membership);
+      // membership.status = "expired";
+      // await membership.save();
     }
     // if (membership.status !== "active") {
     //   return res.status(400).json({
@@ -670,11 +694,16 @@ exports.getRoutine = async (req, res) => {
 
     console.log("MEMBERSHIP", membership);
     if (Membership.verifyEndDate(membership)) {
-      if (client.fitnessInstructorId !== null || client.routineId !== null) {
-        client.fitnessInstructorId = null;
-        client.routineId = null;
-        await client.save();
+      await Client.resetMembershipExtras(client);
+      if (client.mealPlanId !== null) {
+        await MealPlan.destroy({
+          where: {
+            id: client.mealPlanId,
+          },
+        });
       }
+      if (membership.status === "active")
+        await Membership.setToExpired(membership);
       // await Client.update(
       //   { fitnessInstructorId: null, routineId: null },
       //   {
@@ -683,8 +712,8 @@ exports.getRoutine = async (req, res) => {
       //     },
       //   }
       // );
-      membership.status = "expired";
-      await membership.save();
+      // membership.status = "expired";
+      // await membership.save();
       return res.status(403).json({
         success: false,
         message: "Your membership has expired!",
@@ -712,10 +741,16 @@ exports.getRoutine = async (req, res) => {
 
 exports.getMealPlan = async (req, res) => {
   try {
-    const mealPlan = await Client.findOne({
-      attributes: ["id", "mealPlanId"],
+    const client = await Client.findOne({
       where: {
         id: req.clientId,
+      },
+    });
+
+    const mealPlan = await Client.findOne({
+      attributes: ["id", "mealPlanId", "calories"],
+      where: {
+        id: client.id,
       },
       include: [
         {
@@ -728,16 +763,26 @@ exports.getMealPlan = async (req, res) => {
                   model: DayOfWeek,
                 },
                 {
-                  model: EatingDayHasMeal,
+                  model: Meal,
                   include: [
                     {
-                      model: Meal,
+                      model: MealType,
                     },
                     {
                       model: Food,
                       include: [
                         {
-                          model: FoodType,
+                          model: FoodInfo,
+                          include: [
+                            {
+                              model: FoodType,
+                            },
+
+                            {
+                              attributes: ["path"],
+                              model: Image,
+                            },
+                          ],
                         },
                       ],
                     },
@@ -749,6 +794,65 @@ exports.getMealPlan = async (req, res) => {
         },
       ],
     });
+
+    const membership = await Membership.findOne({
+      // attributes: [
+      //   "id",
+      //   "status",
+      //   "clientId",
+      //   "membershipTypeId",
+      //   "end_date",
+      //   "start_date",
+      //   "fee",
+      //   "gymId",
+      // ],
+      where: {
+        clientId: req.clientId,
+      },
+    });
+
+    if (!membership) {
+      return res.status(404).json({
+        success: false,
+        message: "Not found membership! Please create one.",
+      });
+    }
+
+    if (Membership.verifyEndDate(membership)) {
+      // if (
+      //   client.fitnessInstructorId !== null ||
+      //   client.routineId !== null ||
+      //   client.mealPlanId !== null
+      // ) {
+      //   client.fitnessInstructorId = null;
+      //   client.routineId = null;
+      //   client.mealPlanId = null;
+      //   await client.save();
+      // }
+      await Client.resetMembershipExtras(client);
+      if (client.mealPlanId !== null) {
+        await MealPlan.destroy({
+          where: {
+            id: client.mealPlanId,
+          },
+        });
+      }
+      if (membership.status === "active")
+        await Membership.setToExpired(membership);
+      // membership.status = "expired";
+      // await membership.save();
+      return res.status(403).json({
+        success: false,
+        message: "Your membership has expired!",
+      });
+    }
+
+    if (!mealPlan.meal_plan) {
+      return res.status(404).json({
+        success: false,
+        message: "You don't have a meal plan!",
+      });
+    }
 
     return res.status(200).json({
       success: true,
@@ -763,15 +867,94 @@ exports.getMealPlan = async (req, res) => {
 };
 
 exports.addFoodToMeal = async (req, res) => {
-  const { foodId, mealId } = req.body;
+  const { foodId, mealId, quantity } = req.body;
   try {
-    const record = await MealHasFood.create({
-      foodId: foodId,
-      eatingDayHasMealId: mealId,
+    const foodInfo = await FoodInfo.findOne({
+      where: {
+        id: foodId,
+      },
     });
+    if (foodInfo) {
+      const food = await Food.create({
+        quantity: quantity,
+        total_calories: foodInfo.calories * quantity, //TODO: PRECISION
+        total_protein: foodInfo.protein * quantity, //TODO: PRECISION
+        total_carbohydrates: foodInfo.carbohydrates * quantity, //TODO: PRECISION
+        total_fats: foodInfo.fats * quantity, //TODO: PRECISION
+        foodInfoId: foodInfo.id, //TODO: PRECISION
+      });
+
+      const record = await MealHasFood.create({
+        foodId: food.id,
+        mealId: mealId,
+      });
+      return res.status(200).json({
+        success: true,
+        message: "Successfully inserted food to meal",
+      });
+    }
+  } catch (err) {
+    return res.status(500).json({
+      success: false,
+      message: err.message,
+    });
+  }
+};
+
+exports.deleteFoodFromMeal = async (req, res) => {
+  const foodId = req.params.id;
+  try {
+    await Food.destroy({
+      where: {
+        id: foodId,
+      },
+    });
+
     return res.status(200).json({
       success: true,
-      message: "Successfully inserted food to meal",
+      message: "Food removed from meal.",
+    });
+  } catch (err) {
+    return res.status(500).json({
+      success: false,
+      message: err.message,
+    });
+  }
+};
+
+exports.getDashboardData = async (req, res) => {
+  try {
+    const userData = await User.findOne({
+      attributes: ["name"],
+      where: {
+        id: req.id,
+      },
+      include: [
+        {
+          model: Image,
+          attributes: ["path"],
+        },
+      ],
+    });
+    const client = await Client.findOne({
+      attributes: ["calories", "id"],
+      where: {
+        id: req.clientId,
+      },
+    });
+
+    const membership = await Membership.findOne({
+      attributes: ["status"],
+      where: {
+        clientId: client.id,
+      },
+    });
+
+    return res.status(200).json({
+      success: true,
+      userData: userData,
+      clientData: client,
+      membershipStatus: membership,
     });
   } catch (err) {
     return res.status(500).json({
@@ -783,8 +966,15 @@ exports.addFoodToMeal = async (req, res) => {
 
 exports.getAllFoods = async (req, res) => {
   try {
-    const foods = await Food.findAll({
-      attributes: ["name", "calories", "protein", "carbohydrates", "fats"],
+    const foods = await FoodInfo.findAll({
+      attributes: [
+        "id",
+        "name",
+        "calories",
+        "protein",
+        "carbohydrates",
+        "fats",
+      ],
       include: [
         {
           attributes: [["name", "foodType"]],

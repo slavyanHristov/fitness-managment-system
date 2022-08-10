@@ -112,8 +112,9 @@ const setModal = () => {
           <img src="@/assets/images/login.svg" alt="Phone image" />
         </div>
         <div
-          class="flex justify-center transition-all bg-primaryWhite dark:bg-primaryDark sm:mb-9 md:w-8/12 lg:w-5/12 lg:ml-10"
+          class="flex flex-col justify-center gap-8 transition-all bg-primaryWhite dark:bg-primaryDark sm:mb-9 md:w-8/12 lg:w-5/12 lg:ml-10"
         >
+          <h1 class="text-4xl text-center uppercase">Sign in</h1>
           <form class="w-full bg-inherit" @submit.prevent="loginAction">
             <InputField
               v-model:inputContent="user.username"

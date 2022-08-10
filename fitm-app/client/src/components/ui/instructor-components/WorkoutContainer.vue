@@ -4,6 +4,10 @@ import { ref, onMounted, inject } from "vue";
 import Modal from "@/components/ui/Modal.vue";
 import InstructorService from "@/services/API-calls/InstructorService";
 import AddExercise from "./AddExercise.vue";
+import RemoveIcon from "@/components/icons/RemoveIcon.vue";
+import AddIcon from "@/components/icons/AddIcon.vue";
+import NotFoundResource from "@/components/ui/NotFoundResource.vue";
+
 const props = defineProps(["collection"]);
 const apiUrlPath = inject("apiUrlPath");
 const emit = defineEmits(["refrestItems"]);
@@ -14,6 +18,16 @@ const addExercise = (id) => {
   console.log("Added " + id);
   workoutId.value = id;
   isModalOpen.value = true;
+};
+
+const deleteAction = async (id) => {
+  try {
+    const response = await InstructorService.deleteExerciseFromWorkout(id);
+    console.log(response);
+    emit("refrestItems");
+  } catch (err) {
+    console.log(err);
+  }
 };
 </script>
 <template>
@@ -28,6 +42,7 @@ const addExercise = (id) => {
         <AddExercise
           :workout-id="workoutId"
           @refresh-items="emit('refrestItems')"
+          @close-modal="isModalOpen = false"
         />
         <!-- <CreateWorkout
           :routine-id="routineId"
@@ -35,30 +50,17 @@ const addExercise = (id) => {
           @refresh-items="getExercisesInWorkout"
         /> -->
       </Modal>
-      <!--Move to separate component?-->
-      <!-- <table class="table-auto ">
-        <thead>
-          <tr>
-            <th></th>
-            <th></th>
-            <th></th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td></td>
-            <td></td>
-            <td></td>
-          </tr>
-        </tbody>
-      </table> -->
-
+      <div v-if="!props.collection.length">
+        <NotFoundResource title="No workouts in the routine yet." />
+      </div>
       <div
         v-for="workout in props.collection"
         :key="workout.id"
         class="w-full mb-5"
       >
-        <div class="w-full px-6 py-2 rounded-t-lg bg-primaryBlue">
+        <div
+          class="w-full px-6 py-2 rounded-t-lg bg-gradient-to-t from-primaryBlue to-accentBlue"
+        >
           <h1 class="text-3xl font-bold tracking-wider uppercase font-poppins">
             {{ workout.name }}
           </h1>
@@ -72,23 +74,26 @@ const addExercise = (id) => {
 
         <table class="w-full border-collapse font-poppins">
           <thead class="">
-            <tr class="font-bold text-center bg-accentDark">
+            <tr
+              class="font-bold text-center bg-primaryBgWhite dark:bg-accentDark"
+            >
               <th class="px-4 py-1"></th>
               <th class="px-4 py-1">Exercise Name</th>
               <th class="px-4 py-1">Muscle Group</th>
               <th class="px-4 py-1">Sets</th>
               <th class="px-4 py-1">Reps</th>
+              <th class="px-4 py-1">#</th>
             </tr>
           </thead>
           <tbody>
             <tr
               v-for="exercise in workout.exercises"
               :key="exercise.id"
-              class="text-center bg-testColor"
+              class="text-center bg-accentWhite dark:bg-testColor"
             >
               <td class="px-4 py-2">
                 <img
-                  class="w-20 h-16"
+                  class="w-20 h-16 rounded-lg"
                   :src="apiUrlPath + exercise.image.path"
                   alt=""
                 />
@@ -100,6 +105,12 @@ const addExercise = (id) => {
               </td>
               <td class="px-4 py-2">
                 {{ exercise.exercise_has_workout.reps }}
+              </td>
+              <td class="px-4 py-2 cursor-pointer">
+                <RemoveIcon
+                  class="text-red-500 transition-colors hover:text-red-400"
+                  @click="deleteAction(exercise.exercise_has_workout.id)"
+                />
               </td>
             </tr>
           </tbody>
@@ -117,10 +128,11 @@ const addExercise = (id) => {
           </div>
         </div> -->
         <button
-          class="w-full text-xl font-bold text-center uppercase rounded-b-lg bg-primaryGreen font-poppins"
+          class="flex items-center justify-center w-full gap-2 py-2 text-xl font-bold text-center uppercase transition-all rounded-b-lg group text-primaryDark bg-gradient-to-t from-primaryGreen to-accentGreen"
           @click="addExercise(workout.id)"
         >
-          Add Exercise
+          <AddIcon class="transition-colors group-hover:text-primaryBlue" />
+          <p class="tracking-wider">Add Exercise</p>
         </button>
       </div>
     </div>

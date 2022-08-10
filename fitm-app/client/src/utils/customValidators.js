@@ -17,6 +17,7 @@ export const validateFullName = helpers.regex(
   /^[A-Z][a-zA-Z]{2,}(?: [A-Z][a-zA-Z]*){0,2}$/
 );
 export const validateSalary = helpers.regex(/^\d{3,4}(?:\.\d{0,2})?$/);
+export const validatePrecision = helpers.regex(/^\d{0,2}(\.\d{1,2})?$/);
 
 export const validateFileType = (value) => {
   if (!value) {

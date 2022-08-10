@@ -11,7 +11,7 @@ const selectItem = (index) => {
 <template>
   <div
     id="sort"
-    class="flex p-2.5 flex-col items-center justify-center w-full h-full rounded-lg bg-testColor"
+    class="flex p-2.5 flex-col items-center justify-center w-full h-full rounded-lg bg-primaryWhite dark:bg-testColor"
   >
     <h3 class="mb-2.5 font-poppins-light font-light uppercase tracking-wide">
       Sort by
@@ -20,7 +20,11 @@ const selectItem = (index) => {
       <div
         v-for="item in props.sortCollection"
         :key="item.id"
-        :class="item.id === activeItem ? 'bg-blue-500' : 'bg-accentGray'"
+        :class="
+          item.id === activeItem
+            ? 'bg-blue-500'
+            : 'bg-primaryBgWhite dark:bg-accentGray'
+        "
         class="flex justify-center w-full border-b border-primaryDark first:rounded-t last:rounded-b last:border-b-0"
       >
         <button

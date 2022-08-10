@@ -3,6 +3,7 @@ import ThemeToggler from "@/components/ui/ThemeToggler.vue";
 import AuthUserNavItems from "@/components/ui/AuthUserNavItems.vue";
 import ProfilePicture from "../ui/ProfilePicture.vue";
 import ProfilePictureSkeleton from "../skeleton-loaders/ProfilePictureSkeleton.vue";
+import Logo from "@/components/ui/Logo.vue";
 // import ManagerMenuItems from "@/components/ui/ManagerMenuItems.vue";
 import { ref, onMounted, computed } from "vue";
 import { useAuthStore } from "@/stores/authStore";
@@ -29,15 +30,15 @@ const checkScreen = () => {
   return;
 };
 
-const updateScroll = () => {
-  const scrollPosition = window.scrollY;
-  if (scrollPosition > 50) {
-    scrolledNav.value = true;
-    return;
-  }
-  scrolledNav.value = false;
-  return;
-};
+// const updateScroll = () => {
+//   const scrollPosition = window.scrollY;
+//   if (scrollPosition > 50) {
+//     scrolledNav.value = true;
+//     return;
+//   }
+//   scrolledNav.value = false;
+//   return;
+// };
 
 const loggedInUser = computed(() => {
   return authStore.getUserState.user;
@@ -46,18 +47,8 @@ const loggedInUser = computed(() => {
 onMounted(() => {
   window.addEventListener("resize", checkScreen);
   checkScreen();
-  window.addEventListener("scroll", updateScroll);
+  //   window.addEventListener("scroll", updateScroll);
 });
-
-// const logoutAction = async () => {
-//   if (authStore.getUserState.status.isLoggedIn) {
-//     await authStore.logout();
-//     router.push({ name: "home" });
-//     if (mobileNav.value === true) {
-//       mobileNav.value = false;
-//     }
-//   }
-// };
 </script>
 
 <template>
@@ -68,16 +59,8 @@ onMounted(() => {
     <nav
       class="relative flex items-center justify-between transition-all px-10p"
     >
-      <div id="branding">
-        <router-link :to="{ name: 'home' }">
-          <h1
-            class="py-2 text-3xl italic font-extrabold text-transparent transition-all select-none bg-gradient-to-t from-primaryBlue to-accentBlue bg-clip-text font-poppins"
-          >
-            FIT/M
-          </h1>
-        </router-link>
-      </div>
-      <div class="flex items-center flex-1">
+      <Logo />
+      <div class="flex items-center flex-1 text-sm lg:text-base">
         <div v-show="!mobile" id="navigation" class="flex items-center flex-1">
           <div class="flex ml-9">
             <router-link id="link" class="router-views" :to="{ name: 'about' }"
@@ -112,7 +95,7 @@ onMounted(() => {
       </div>
       <!--PROFILE PIC-->
 
-      <div class="flex items-center">
+      <div class="flex items-center ml-8">
         <div v-if="loggedInUser">
           <Suspense>
             <template #default>
@@ -149,20 +132,33 @@ onMounted(() => {
             class="py-2 mt-10 text-center uppercase"
             @click="mobileNav = false"
           >
-            <router-link id="link" :to="{ name: 'about' }">About</router-link>
+            <router-link id="link" class="router-views" :to="{ name: 'about' }"
+              >About</router-link
+            >
           </div>
           <div v-if="!loggedInUser">
             <div class="py-2 text-center uppercase" @click="mobileNav = false">
-              <router-link id="link" :to="{ name: 'login' }">Login</router-link>
+              <router-link
+                id="link"
+                class="router-views"
+                :to="{ name: 'login' }"
+                >Login</router-link
+              >
             </div>
             <div class="py-2 text-center uppercase" @click="mobileNav = false">
-              <router-link id="link" :to="{ name: 'register' }"
+              <router-link
+                id="link"
+                class="router-views"
+                :to="{ name: 'register' }"
                 >Register</router-link
               >
             </div>
           </div>
           <div v-if="loggedInUser" class="flex flex-col">
-            <AuthUserNavItems @close-mobile-nav="mobileNav = false" />
+            <AuthUserNavItems
+              :is-flex-column="true"
+              @close-mobile-nav="mobileNav = false"
+            />
           </div>
 
           <ThemeToggler class="mt-10" />

@@ -6,7 +6,8 @@
     "build": "vite build",
     "preview": "vite preview --port 5050",
     "lint": "eslint --ext .js,.vue --ignore-path .gitignore --fix src",
-    "format": "prettier .  --write"
+    "format": "prettier .  --write",
+    "test:unit": "vitest --environment jsdom"
   },
   "dependencies": {
     "@vuelidate/core": "^2.0.0-alpha.41",
@@ -18,15 +19,23 @@
     "vue-router": "^4.0.14"
   },
   "devDependencies": {
+    "@testing-library/dom": "^8.16.1",
+    "@testing-library/user-event": "^14.4.2",
+    "@testing-library/vue": "^6.6.1",
     "@vitejs/plugin-vue": "^2.3.1",
     "autoprefixer": "^10.4.7",
+    "cypress": "^10.4.0",
     "eslint": "^8.19.0",
     "eslint-config-prettier": "^8.5.0",
+    "eslint-plugin-cypress": "^2.12.1",
     "eslint-plugin-vue": "^9.2.0",
+    "jsdom": "^20.0.0",
+    "msw": "^0.44.2",
     "postcss": "^8.4.14",
     "prettier": "2.7.1",
     "tailwindcss": "^3.0.24",
     "vite": "^2.9.5",
+    "vitest": "^0.21.0",
     "vue-eslint-parser": "^9.0.3"
   }
 }

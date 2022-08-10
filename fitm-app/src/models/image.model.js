@@ -38,7 +38,7 @@ module.exports = (sequelizeConn, DataTypes) => {
       // onDelete: "cascade",
       onUpdate: "cascade",
     });
-    Image.hasMany(models.food, {
+    Image.hasMany(models.food_info, {
       onUpdate: "cascade",
     });
   };
