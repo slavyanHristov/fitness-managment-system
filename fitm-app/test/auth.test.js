@@ -5,8 +5,6 @@ const { adminPayload } = require("./mocks/mockData");
 // const db = require("../src/models");
 const app = createServer();
 
-// const User_Type = db.user_type;
-
 describe("Test admin registration.", () => {
   beforeAll(async () => {
     await dbOperations.syncWithDB();

@@ -48,13 +48,6 @@ module.exports = (sequelizeConn, DataTypes) => {
       onDelete: "cascade",
       onUpdate: "cascade",
     });
-    // FitnessInstructor.belongsTo(models.employee, {
-    //     foreignKey: {
-    //         allowNull: false
-    //     },
-    //     onDelete: "cascade",
-    //     onUpdate: "cascade"
-    // })
     FitnessInstructor.belongsTo(models.user, {
       foreignKey: {
         allowNull: false,

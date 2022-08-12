@@ -1,18 +1,14 @@
-import {
-    createApp
-} from 'vue'
-import {
-    createPinia
-} from 'pinia'
+import { createApp } from "vue";
+import { createPinia } from "pinia";
 
-import App from './App.vue'
-import router from './router'
-import './index.css'
+import App from "./App.vue";
+import router from "./router";
+import "./index.css";
 
-const app = createApp(App)
+const app = createApp(App);
 
-app.use(router)
-app.use(createPinia())
-app.provide("apiUrlPath", "http://localhost:5000/")
+app.use(router);
+app.use(createPinia());
+app.provide("apiUrlPath", `${import.meta.env.VITE_BACKEND_URL}/`);
 
-app.mount('#app')
+app.mount("#app");

@@ -64,7 +64,12 @@ module.exports = (sequelizeConn, DataTypes) => {
       },
       description: {
         type: DataTypes.TEXT,
-        //TODO: Add some validation
+        validate: {
+          is: {
+            args: regularExpressions.description.regex,
+            msg: regularExpressions.description.msg,
+          },
+        },
       },
     },
     {

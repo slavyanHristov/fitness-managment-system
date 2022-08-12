@@ -3,21 +3,21 @@ import { ref, computed, onUnmounted } from "vue";
 import { useRouter } from "vue-router";
 import ManagerService from "@/services/API-calls/ManagerService";
 
-import GridContainer from "./GridContainer.vue";
-import RangeFilter from "./RangeFilter.vue";
-import SearchFilter from "./SearchFilter.vue";
-import SortCollection from "./SortCollection.vue";
-import EmployeeCard from "./EmployeeCard.vue";
-import AllGymsSkeleton from "../skeleton-loaders/AllGymsSkeleton.vue";
+import GridContainer from "@/components/ui/GridContainer.vue";
+import RangeFilter from "@/components/ui/RangeFilter.vue";
+import SearchFilter from "@/components/ui/SearchFilter.vue";
+import SortCollection from "@/components/ui/SortCollection.vue";
+import EmployeeCard from "@/components/ui/manager-components/EmployeeCard.vue";
+import AllGymsSkeleton from "@/components/skeleton-loaders/AllGymsSkeleton.vue";
 import Toast from "@/components/ui/Toast.vue";
 import ErrorIcon from "@/components/icons/ErrorIcon.vue";
+import CoverImage from "@/components/ui/CoverImage.vue";
 
 import {
   filterByRangeAndSearch,
   sortByNumberAsc,
   sortByNumberDesc,
 } from "@/utils/filtrationsAndSorts";
-import CoverImage from "./CoverImage.vue";
 
 const router = useRouter();
 const employeesCollection = ref(null);

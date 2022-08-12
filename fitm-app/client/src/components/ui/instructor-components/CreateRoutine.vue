@@ -1,9 +1,9 @@
 <script setup>
 import { ref, computed } from "vue";
-import InputField from "./InputField.vue";
+import InputField from "@/components/ui/InputField.vue";
 import useVuelidate from "@vuelidate/core";
 import { required, helpers } from "@vuelidate/validators";
-import MainButton from "./MainButton.vue";
+import MainButton from "@/components/ui/MainButton.vue";
 import InstuctorService from "@/services/API-calls/InstructorService";
 
 const emit = defineEmits(["closeModal", "refreshItems"]);

@@ -15,7 +15,7 @@ import MainButton from "@/components/ui/MainButton.vue";
 import AdminService from "@/services/API-calls/AdminService";
 
 import parsePayload from "@/utils/parsePayload";
-import UploadImage from "./UploadImage.vue";
+import UploadImage from "@/components/ui/UploadImage.vue";
 
 const props = defineProps(["gymData"]);
 const emit = defineEmits(["closeModal", "refreshGymData"]);

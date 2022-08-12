@@ -3,7 +3,9 @@ import TokenService from "../TokenService";
 import RefreshTokenAPI from "./RefreshTokenAPI";
 import { useAuthStore } from "@/stores/authStore";
 
-export default (url = "http://localhost:5000/api") => {
+// https://fitm-serv.herokuapp.com/api
+// http://localhost:5000/api
+export default (url = `${import.meta.env.VITE_BACKEND_URL}/api`) => {
   const axiosInstance = axios.create({
     baseURL: url,
   });

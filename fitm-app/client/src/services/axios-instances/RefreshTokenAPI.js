@@ -1,8 +1,9 @@
 import axios from "axios";
 // import TokenService from '../TokenService'
 import { useAuthStore } from "@/stores/authStore";
+// http://localhost:5000/api/auth
 
-export default (url = "http://localhost:5000/api/auth") => {
+export default (url = `${import.meta.env.VITE_BACKEND_URL}/api/auth`) => {
   const axiosInstance = axios.create({
     baseURL: url,
     withCredentials: true,

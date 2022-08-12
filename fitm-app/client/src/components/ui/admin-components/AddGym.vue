@@ -9,7 +9,7 @@ import Toast from "@/components/ui/Toast.vue";
 import parsePayload from "@/utils/parsePayload";
 import WarningIcon from "@/components/icons/WarningIcon.vue";
 import SuccessIcon from "@/components/icons/SuccessIcon.vue";
-import MultiStepSkeleton from "../skeleton-loaders/MultiStepSkeleton.vue";
+import MultiStepSkeleton from "@/components/skeleton-loaders/MultiStepSkeleton.vue";
 import {
   validateTimeFormat,
   validateDescription,
@@ -107,21 +107,6 @@ const requiredFile = () => {
   }
   return true;
 };
-
-// const validateFileType = (value) => {
-//   if (!value) {
-//     return true;
-//   }
-//   let selectedFiles = value;
-//   let isImage = true;
-//   Object.keys(selectedFiles).forEach((file) => {
-//     console.log("file", selectedFiles[file]);
-//     if (!selectedFiles[file].type.startsWith("image")) {
-//       isImage = false;
-//     }
-//   });
-//   return isImage;
-// };
 
 const rules = computed(() => {
   return {

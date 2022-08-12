@@ -16,9 +16,6 @@ module.exports = (sequelizeConn, DataTypes) => {
       path: {
         type: DataTypes.STRING,
       },
-      // data: {
-      //     type: DataTypes.BLOB("long")
-      // }
     },
     {
       freezeTableName: true,
@@ -31,11 +28,9 @@ module.exports = (sequelizeConn, DataTypes) => {
       onUpdate: "cascade",
     });
     Image.hasMany(models.user, {
-      // onDelete: "cascade",
       onUpdate: "cascade",
     });
     Image.hasMany(models.exercise, {
-      // onDelete: "cascade",
       onUpdate: "cascade",
     });
     Image.hasMany(models.food_info, {

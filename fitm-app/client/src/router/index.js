@@ -187,16 +187,6 @@ const routes = [
     },
   },
   {
-    path: "/instructor/mealPlan",
-    name: "mealPlan",
-    // beforeEnter: guardManagerRoutes,
-    component: () => import("@/views/instructor/TestMealPlan.vue"),
-    meta: {
-      requiresAuth: true,
-      userType: [3],
-    },
-  },
-  {
     path: "/client/dashboard",
     name: "clientDashboard",
     // beforeEnter: guardManagerRoutes,

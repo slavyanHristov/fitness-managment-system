@@ -102,7 +102,7 @@ exports.getOneGym = async (req, res) => {
   const id = req.params.id;
   const foundGym = await Gym.findOne({
     where: {
-      id: id, // Condition
+      id: id,
     },
     include: gymInnerJoins,
   });
@@ -140,7 +140,7 @@ exports.getAllInstructors = async (req, res) => {
         "phone",
       ],
       where: {
-        position: 1, //TODO: ?????
+        position: 1, // ENUM KEY 1 => "Fitness Instructor"
       },
       include: employeeInnerJoins,
     });

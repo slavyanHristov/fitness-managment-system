@@ -6,3 +6,5 @@ sql-queries.txt
 ethereal-credentials.txt
 sandbox-credentials.txt
 paypal_access_token.txt
+fitm_db_schema.sql
+fitm_db_schema_final.sql

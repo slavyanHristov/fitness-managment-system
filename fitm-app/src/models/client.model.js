@@ -53,17 +53,6 @@ module.exports = (sequelizeConn, DataTypes) => {
           },
         },
       },
-      sleep_time: {
-        //TODO: Do i really need this?
-        type: DataTypes.TIME,
-
-        validate: {
-          is: {
-            args: regularExpressions.hours_mins_secs.regex,
-            msg: regularExpressions.hours_mins_secs.msg,
-          },
-        },
-      },
       activity_level: {
         type: DataTypes.ENUM(
           "not active",
@@ -74,14 +63,12 @@ module.exports = (sequelizeConn, DataTypes) => {
         defaultValue: "lightly active",
       },
       fitness_goal: {
-        //TODO: Should I leave it as ENUM or move it to separate table?
         type: DataTypes.ENUM("Muscle Gain", "Weight loss", "Maintenance"),
-        defaultValue: "maintenance",
+        defaultValue: "Maintenance",
       },
       fitness_level: {
-        //TODO: Should I leave it as ENUM or move it to separate table?
         type: DataTypes.ENUM("Beginner", "Novice", "Intermediate", "Advanced"),
-        defaultValue: "novice",
+        defaultValue: "Novice",
       },
       calories: {
         type: DataTypes.FLOAT,
@@ -94,14 +81,9 @@ module.exports = (sequelizeConn, DataTypes) => {
   );
 
   Client.resetMembershipExtras = async (client) => {
-    if (
-      client.fitnessInstructorId !== null ||
-      client.routineId !== null
-      // || client.mealPlanId !== null
-    ) {
+    if (client.fitnessInstructorId !== null || client.routineId !== null) {
       client.fitnessInstructorId = null;
       client.routineId = null;
-      // client.mealPlanId = null;
       await client.save().catch(() => {
         throw new Error("Something went wrong with client update!");
       });
@@ -112,6 +94,9 @@ module.exports = (sequelizeConn, DataTypes) => {
 
   Client.associate = (models) => {
     Client.hasMany(models.membership, {
+      foreignKey: {
+        allowNull: false,
+      },
       onDelete: "cascade",
       onUpdate: "cascade",
     });
@@ -130,15 +115,7 @@ module.exports = (sequelizeConn, DataTypes) => {
       onDelete: "cascade",
       onUpdate: "cascade",
     });
-    // Client.belongsTo(models.client_fitness_level, {
-    //   foreignKey: {
-    //     allowNull: false,
-    //   },
-    //   onDelete: "cascade",
-    //   onUpdate: "cascade",
-    // });
     Client.belongsTo(models.meal_plan, {
-      // onDelete: "cascade",
       onUpdate: "cascade",
     });
     Client.belongsTo(models.routine, {

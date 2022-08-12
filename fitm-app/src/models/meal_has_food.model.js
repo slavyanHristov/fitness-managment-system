@@ -24,11 +24,6 @@ module.exports = (sequelizeConn, DataTypes) => {
   };
 
   MealHasFood.associate = (models) => {
-    // MealHasFood.belongsToMany(models.eating_day, {
-    //     through: models.eating_day_has_meal_has_food,
-    //     onDelete: "cascade",
-    //     onUpdate: "cascade"
-    // })
     MealHasFood.belongsTo(models.meal, {
       foreignKey: {
         allowNull: false,
@@ -43,13 +38,6 @@ module.exports = (sequelizeConn, DataTypes) => {
       onDelete: "cascade",
       onUpdate: "cascade",
     });
-    // MealHasFood.hasMany(models.eating_day_has_meal_has_food, {
-    //     foreignKey: {
-    //         allowNull: false
-    //     },
-    //     onDelete: "cascade",
-    //     onUpdate: "cascade"
-    // })
   };
   return MealHasFood;
 };

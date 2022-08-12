@@ -1,3 +1,5 @@
+const env = process.env.NODE_ENV || "development";
+const { CLIENT_URL, APP_DOMAIN } = require("../../config/config")[env];
 const db = require("../models");
 const paypal = require("paypal-rest-sdk");
 const { flatten } = require("../utils");
@@ -6,15 +8,12 @@ const Membership = db.membership;
 const MembershipType = db.membership_type;
 const Gym = db.gym;
 const FitnessInstructor = db.fitness_instructor;
-const Notification = db.notification;
-const NotificationRecipient = db.notification_recipient;
 const Image = db.image;
 const Employee = db.employee;
 const User = db.user;
 const Routine = db.routine;
 const Exercise = db.exercise;
 const Workout = db.workout;
-// const WeekDay = db.week_day;
 const DayOfWeek = db.day_of_week;
 const EatingDay = db.eating_day;
 const Meal = db.meal;
@@ -28,8 +27,6 @@ const MuscleGroup = db.muscle_group;
 const WorkoutType = db.workout_type;
 const ExerciseType = db.exercise_type;
 const MealPlan = db.meal_plan;
-
-// paypal configs
 
 const instructorJoins = [
   {
@@ -53,107 +50,6 @@ const instructorJoins = [
     attributes: ["name"],
   },
 ];
-
-exports.createMembership = async (req, res) => {
-  const { gymId, membershipTypeId } = req.body;
-  const foundGym = await Gym.findOne({
-    where: {
-      id: gymId,
-    },
-  });
-  //   const foundClient = await Client.findOne({
-  //     where: {
-  //       id: req.clientId,
-  //     },
-  //   });
-  if (!foundGym) {
-    return res.status(404).json({
-      success: false,
-      message: "Gym does not exist!",
-    });
-  }
-
-  try {
-    const isMembershipExistent = await Membership.findOne({
-      where: {
-        clientId: req.clientId,
-        gymId: gymId,
-      },
-    });
-    if (isMembershipExistent) {
-      // TODO: Renewal should be called only when there is a membership for the given client AND
-      // it's status is expired or cancelled
-      //TODO: Figure out where you can call renew client's expired or paused membership
-      //TODO: On renewal it should update start_date, end_date, status, fee and membershipTypeId
-      return res.status(400).json({
-        success: false,
-        message: "Client already has membership in this gym.",
-      });
-    }
-
-    const membership = await Membership.createMembership(
-      foundGym,
-      req.clientId,
-      membershipTypeId
-    );
-    return res.status(200).json({
-      success: true,
-      membership,
-    });
-  } catch (err) {
-    return res.status(500).json({
-      success: false,
-      message: err.message,
-    });
-  }
-};
-//TODO: Maybe I need this to be changed to Patch method instead of Post?
-exports.verifyEndDate = async (req, res) => {
-  //   const foundClient = await Client.findOne({
-  //     where: {
-  //       id: req.clientId,
-  //     },
-  //   });
-  //   if (!foundClient) {
-  //     return res.status(404).json({
-  //       success: false,
-  //       message: "Client doesn't exist",
-  //     });
-  //   }
-
-  try {
-    const foundMembership = await Membership.verifyValidity(req.clientId);
-    if (!foundMembership) {
-      return res.status(404).json({
-        success: false,
-        message: "User doesn't have membership or it's not valid!",
-      });
-    }
-
-    if (Membership.verifyEndDate(foundMembership)) {
-      await Client.update(
-        { fitnessInstructorId: null },
-        {
-          where: {
-            id: req.clientId,
-          },
-        }
-      );
-      foundMembership.status = "expired";
-      await foundMembership.save();
-    }
-
-    return res.status(200).json({
-      success: true,
-      message: foundMembership.status,
-    });
-  } catch (err) {
-    return res.status(500).json({
-      success: false,
-      message: err.message,
-    });
-  }
-};
 
 exports.setInstructor = async (req, res) => {
   const instructorId = req.params.id;
@@ -201,8 +97,6 @@ exports.setInstructor = async (req, res) => {
     const loggedClient = await Client.findOne({
       where: req.clientId,
     });
-    //TODO: On the front-end before setInstructor is called, verifyEndDate should be called
-    // before it
     const validMembership = await Membership.verifyValidity(req.clientId);
 
     if (!validMembership) {
@@ -219,17 +113,7 @@ exports.setInstructor = async (req, res) => {
     }
     loggedClient.fitnessInstructorId = instructor.id;
     await loggedClient.save();
-    // await loggedClient.setFitness_instructor(instructor);
-    // const loggedClient = await Client.update(
-    //   { fitnessInstructorId: instructor.id },
-    //   {
-    //     where: {
-    //       id: req.clientId,
-    //     },
-    //   }
-    // );
 
-    // await createNotification(loggedClient, instructor);
     return res.status(200).json({
       success: true,
       message: "You now have a fitness instructor!",
@@ -289,19 +173,6 @@ exports.getInstructorsInGym = async (req, res) => {
   }
 };
 
-const createNotification = async (sender, recipient) => {
-  const notification = await Notification.create({
-    title: "New client!",
-    description: "You've been chosen for instructor by a client!",
-    userId: sender.userId,
-  });
-  await notification.createNotification_recipient({
-    is_read: 2,
-    userId: recipient.userId,
-  });
-};
-
-// Send, Recieve notifications?
 exports.payment = async (req, res) => {
   const { fee, name, membershipTypeId, gymId } = req.body;
   try {
@@ -312,22 +183,18 @@ exports.payment = async (req, res) => {
     const isMembershipExistent = await Membership.findOne({
       where: {
         clientId: req.clientId,
-        // gymId: gymId,
       },
     });
     if (!isMembershipExistent || isMembershipExistent.status !== "active") {
-      // TODO: Renewal should be called only when there is a membership for the given client AND
-      // it's status is expired or cancelled
-      //TODO: Figure out where you can call renew client's expired or paused membership
-      //TODO: On renewal it should update start_date, end_date, status, fee and membershipTypeId
       const create_payment_json = {
         intent: "sale",
         payer: {
           payment_method: "paypal",
         },
         redirect_urls: {
-          return_url: "http://localhost:5000/api/client/success",
-          cancel_url: "http://localhost:5000/api/client/cancel",
+          //APP_DOMAIN
+          return_url: `http://${APP_DOMAIN}/api/client/success`,
+          cancel_url: `http://${APP_DOMAIN}/api/client/cancel`,
         },
         transactions: [
           {
@@ -390,18 +257,8 @@ exports.paymentSuccess = async (req, res) => {
   //execute payment json
   const payerId = req.query.PayerID;
   const paymentId = req.query.paymentId;
-  const token = req.query.token;
-
   const execute_payment_json = {
     payer_id: payerId,
-    // transactions: [
-    //   {
-    //     amount: {
-    //       currency: "USD",
-    //       total:
-    //     },
-    //   },
-    // ],
   };
 
   //execute payment
@@ -423,96 +280,22 @@ exports.paymentSuccess = async (req, res) => {
             id: parseInt(membershipData[1]), //gymId
           },
         });
-        // const foundMembership = await Membership.findOne({
-        //   where: {
-        //     clientId: membershipData[2],
-        //   },
-        // });
-        // if (foundMembership) {
-        // await Membership.renewMembership(
-        //   foundGym,
-        //   parseInt(membershipData[2]),
-        //   parseInt(membershipData[0])
-        // );
-        // } else {
         await Membership.createMembership(
           foundGym,
           parseInt(membershipData[2]), //clientId
           parseInt(membershipData[0]) // membershipTypeId
         );
-        // }
-
-        //TODO: FIRST WAY WITH QUERY STRING AND GET REQUEST ON SUCCESS PAGE AND THEN SET IN AUTH STORE AND LOCALSTORAGE
-        //TODO: SECOND WAY WITH LOGOUT ON SUCCESS PAGE
-        //TODO: THIRD WAY GET MEMBERSHIP AND CLIENT DATA ON EACH REFERSH ?
-        // const params = new URLSearchParams();
-        // params.append("clientId", parseInt(membershipData[2]));
-        // params.append("membershipId", membership.id);
-        return res.redirect("http://localhost:3000/success");
+        return res.redirect(`${CLIENT_URL}/success`);
       }
     }
   );
-
-  // const { gymId, membershipTypeId } = req.body;
-  // const foundGym = await Gym.findOne({
-  //   where: {
-  //     id: gymId,
-  //   },
-  // });
-  //   const foundClient = await Client.findOne({
-  //     where: {
-  //       id: req.clientId,
-  //     },
-  //   });
-  // if (!foundGym) {
-  //   return res.status(404).json({
-  //     success: false,
-  //     message: "Gym does not exist!",
-  //   });
-  // }
-
-  // try {
-  //   const isMembershipExistent = await Membership.findOne({
-  //     where: {
-  //       clientId: req.clientId,
-  //       gymId: gymId,
-  //     },
-  //   });
-  //   if (isMembershipExistent) {
-  //     // TODO: Renewal should be called only when there is a membership for the given client AND
-  //     // it's status is expired or cancelled
-  //     //TODO: Figure out where you can call renew client's expired or paused membership
-  //     //TODO: On renewal it should update start_date, end_date, status, fee and membershipTypeId
-  //     return res.status(400).json({
-  //       success: false,
-  //       message: "Client already has membership in this gym.",
-  //     });
-  //   }
-
-  //   const membership = await Membership.createMembership(
-  //     foundGym,
-  //     req.clientId,
-  //     membershipTypeId
-  //   );
-  //   return res.status(200).json({
-  //     success: true,
-  //     membership,
-  //   });
-  // } catch (err) {
-  //   return res.status(500).json({
-  //     success: false,
-  //     message: err.message,
-  //   });
-  // }
 };
 
 exports.paymentCancel = (req, res) => {
-  return res.redirect("http://localhost:3000");
+  return res.redirect(`${CLIENT_URL}`);
 };
 
 exports.getMembership = async (req, res) => {
-  // const clientId = req.params.clientId;
-  // const membershipId = req.params.clientId;
   try {
     const client = await Client.findOne({
       where: {
@@ -553,11 +336,6 @@ exports.getMembership = async (req, res) => {
     }
 
     if (Membership.verifyEndDate(membership)) {
-      // if (client.fitnessInstructorId !== null || client.routineId !== null) {
-      //   client.fitnessInstructorId = null;
-      //   client.routineId = null;
-      //   await client.save();
-      // }
       await Client.resetMembershipExtras(client);
       if (client.mealPlanId !== null) {
         await MealPlan.destroy({
@@ -566,25 +344,9 @@ exports.getMembership = async (req, res) => {
           },
         });
       }
-      // await Client.update(
-      //   { fitnessInstructorId: null, routineId: null },
-      //   {
-      //     where: {
-      //       id: client.id,
-      //     },
-      //   }
-      // );
       if (membership.status === "active")
         await Membership.setToExpired(membership);
-      // membership.status = "expired";
-      // await membership.save();
     }
-    // if (membership.status !== "active") {
-    //   return res.status(400).json({
-    //     success: false,
-    //     message: "Your membership is not active!",
-    //   });
-    // }
 
     return res.status(200).json({
       success: true,
@@ -599,15 +361,7 @@ exports.getMembership = async (req, res) => {
 };
 
 exports.getRoutine = async (req, res) => {
-  // const routineId = req.params.id;
   try {
-    // const exercises = await ExerciseHasWorkout.findAll({
-    //   //attributes
-    //   where: {
-    //     workoutId: workoutId,
-    //   },
-    //   //include
-    // });
     const client = await Client.findOne({
       where: {
         id: req.clientId,
@@ -616,7 +370,6 @@ exports.getRoutine = async (req, res) => {
     const clientRoutine = await Client.findOne({
       attributes: [],
       where: {
-        // fitnessInstructorId: req.instructorId,
         id: client.id,
       },
       include: [
@@ -671,16 +424,6 @@ exports.getRoutine = async (req, res) => {
       ],
     });
     const membership = await Membership.findOne({
-      // attributes: [
-      //   "id",
-      //   "status",
-      //   "clientId",
-      //   "membershipTypeId",
-      //   "end_date",
-      //   "start_date",
-      //   "fee",
-      //   "gymId",
-      // ],
       where: {
         clientId: req.clientId,
       },
@@ -704,16 +447,6 @@ exports.getRoutine = async (req, res) => {
       }
       if (membership.status === "active")
         await Membership.setToExpired(membership);
-      // await Client.update(
-      //   { fitnessInstructorId: null, routineId: null },
-      //   {
-      //     where: {
-      //       id: client.id,
-      //     },
-      //   }
-      // );
-      // membership.status = "expired";
-      // await membership.save();
       return res.status(403).json({
         success: false,
         message: "Your membership has expired!",
@@ -796,16 +529,6 @@ exports.getMealPlan = async (req, res) => {
     });
 
     const membership = await Membership.findOne({
-      // attributes: [
-      //   "id",
-      //   "status",
-      //   "clientId",
-      //   "membershipTypeId",
-      //   "end_date",
-      //   "start_date",
-      //   "fee",
-      //   "gymId",
-      // ],
       where: {
         clientId: req.clientId,
       },
@@ -819,16 +542,6 @@ exports.getMealPlan = async (req, res) => {
     }
 
     if (Membership.verifyEndDate(membership)) {
-      // if (
-      //   client.fitnessInstructorId !== null ||
-      //   client.routineId !== null ||
-      //   client.mealPlanId !== null
-      // ) {
-      //   client.fitnessInstructorId = null;
-      //   client.routineId = null;
-      //   client.mealPlanId = null;
-      //   await client.save();
-      // }
       await Client.resetMembershipExtras(client);
       if (client.mealPlanId !== null) {
         await MealPlan.destroy({
@@ -839,8 +552,6 @@ exports.getMealPlan = async (req, res) => {
       }
       if (membership.status === "active")
         await Membership.setToExpired(membership);
-      // membership.status = "expired";
-      // await membership.save();
       return res.status(403).json({
         success: false,
         message: "Your membership has expired!",
@@ -877,14 +588,14 @@ exports.addFoodToMeal = async (req, res) => {
     if (foodInfo) {
       const food = await Food.create({
         quantity: quantity,
-        total_calories: foodInfo.calories * quantity, //TODO: PRECISION
-        total_protein: foodInfo.protein * quantity, //TODO: PRECISION
-        total_carbohydrates: foodInfo.carbohydrates * quantity, //TODO: PRECISION
-        total_fats: foodInfo.fats * quantity, //TODO: PRECISION
-        foodInfoId: foodInfo.id, //TODO: PRECISION
+        total_calories: foodInfo.calories * quantity,
+        total_protein: foodInfo.protein * quantity,
+        total_carbohydrates: foodInfo.carbohydrates * quantity,
+        total_fats: foodInfo.fats * quantity,
+        foodInfoId: foodInfo.id,
       });
 
-      const record = await MealHasFood.create({
+      await MealHasFood.create({
         foodId: food.id,
         mealId: mealId,
       });

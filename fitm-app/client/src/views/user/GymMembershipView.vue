@@ -1,7 +1,7 @@
 <script setup>
 import { onErrorCaptured, ref } from "vue";
 import MultiStepSkeleton from "@/components/skeleton-loaders/MultiStepSkeleton.vue";
-import Membership from "@/components/ui/Membership.vue";
+import Membership from "@/components/ui/client-components/Membership.vue";
 const err = ref(null);
 onErrorCaptured((e) => {
   err.value = e;

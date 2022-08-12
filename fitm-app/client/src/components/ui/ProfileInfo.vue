@@ -9,8 +9,8 @@ import SuccessIcon from "@/components/icons/SuccessIcon.vue";
 import SaveIcon from "../icons/SaveIcon.vue";
 
 const imgStore = useImgStore();
-let toastType = ref("");
-let toastMsg = ref("");
+const toastType = ref("");
+const toastMsg = ref("");
 const apiUrlPath = inject("apiUrlPath");
 const selectedPicture = ref(null);
 let profilePicturePath = ref("");
@@ -143,7 +143,7 @@ const userDetails = computed(() => {
               <div class="flex items-center p-6">
                 <img
                   class="w-7 h-7"
-                  :src="'/src/assets/icons/' + detail[0] + '.svg'"
+                  :src="'src/assets/icons/' + detail[0] + '.svg'"
                   alt="img"
                 />
                 <span class="pl-3 italic font-normal font-poppins-normal">{{

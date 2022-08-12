@@ -1,5 +1,5 @@
 <script setup>
-import AllEmployees from "@/components/ui/AllEmployees.vue";
+import AllEmployees from "@/components/ui/manager-components/AllEmployees.vue";
 import AllGymsSkeleton from "@/components/skeleton-loaders/AllGymsSkeleton.vue";
 </script>
 

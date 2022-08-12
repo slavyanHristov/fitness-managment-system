@@ -7,7 +7,7 @@ import Carousel from "./Carousel.vue";
 import FullAccessService from "@/services/API-calls/FullAccessService";
 import SkewedButton from "./SkewedButton.vue";
 import Modal from "./Modal.vue";
-import EditGym from "./EditGym.vue";
+import EditGym from "@/components/ui/admin-components/EditGym.vue";
 
 const props = defineProps(["gymId"]);
 const router = useRouter();

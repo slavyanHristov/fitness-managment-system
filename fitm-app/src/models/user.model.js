@@ -98,33 +98,23 @@ module.exports = (sequelizeConn, DataTypes) => {
       freezeTableName: true,
     }
   );
-
-  User.beforeCreate(async (user, options) => {
+  User.hashPassword = async (user) => {
     const hashedPassword = await hashOperations.hashSecret(user.password);
     user.password = hashedPassword;
+  };
+  User.beforeCreate(async (user, options) => {
+    await User.hashPassword(user);
   });
 
   User.beforeUpdate(async (user, options) => {
-    if (user.password) {
-      const hashedPassword = await hashOperations.hashSecret(user.password);
-      user.password = hashedPassword;
-    }
+    await User.hashPassword(user);
   });
 
   User.associate = (models) => {
-    User.hasOne(models.refreshToken, {
-      onDelete: "cascade",
-      onUpdate: "cascade",
-    });
     User.belongsTo(models.image, {
-      // foreignKey: {
-      //     allowNull: false,
-      //     defaultValue: 1
-      // },
-      // onDelete: "cascade",
       onUpdate: "cascade",
     });
-    User.hasOne(models.reset_password_token, {
+    User.hasMany(models.token, {
       onDelete: "cascade",
       onUpdate: "cascade",
     });
@@ -143,18 +133,10 @@ module.exports = (sequelizeConn, DataTypes) => {
       onDelete: "cascade",
       onUpdate: "cascade",
     });
-    User.hasMany(models.notification, {
-      onDelete: "cascade",
-      onUpdate: "cascade",
-    });
     User.hasMany(models.fitness_instructor, {
       foreignKey: {
         allowNull: false,
       },
-      onDelete: "cascade",
-      onUpdate: "cascade",
-    });
-    User.hasMany(models.notification_recipient, {
       onDelete: "cascade",
       onUpdate: "cascade",
     });

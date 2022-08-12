@@ -5,15 +5,12 @@ const Image = db.image;
 const User = db.user;
 const Manager = db.manager;
 const Client = db.client;
-const Membership = db.membership;
 const FitnessInstructor = db.fitness_instructor;
 const Employee = db.employee;
 const Gym = db.gym;
-const ResetPasswordToken = db.reset_password_token;
+const Token = db.token;
 const UserType = db.user_type;
 const { getValidationErrors, hashOperations, flatten } = require("../utils");
-
-// '/resources/static/assets/uploads/1657374827143-fitM-Screenshot 2022-07-07 231036.png'
 const uploadsPath = "/resources/static/assets/uploads/";
 
 const getUserDataByRole = async (user) => {
@@ -74,38 +71,6 @@ const getUserDataByRole = async (user) => {
         ],
       });
 
-      // foundUser = await FitnessInstructor.findOne({
-      //   attributes: [],
-      //   where: {
-      //     userId: user.id,
-      //   },
-      //   include: [
-      //     {
-      //       model: User,
-      //       attributes: ["id", "name", "username", "email", "userTypeId"],
-      //       include: [
-      //         {
-      //           model: Image,
-      //           attributes: ["path"],
-      //         },
-      //         {
-      //           model: UserType,
-      //           attributes: [["name", "userType"]],
-      //         },
-      //       ],
-      //     },
-      //     {
-      //       model: Employee,
-      //       attributes: ["salary", "phone"],
-      //       include: [
-      //         {
-      //           model: Gym,
-      //           attributes: [["name", "gym"]],
-      //         },
-      //       ],
-      //     },
-      //   ],
-      // });
       break;
     case 4:
       foundUser = await Client.findOne({
@@ -115,7 +80,7 @@ const getUserDataByRole = async (user) => {
           "calories",
           "fitness_level",
           "fitness_goal",
-        ], //TODO: add aditional attributes
+        ],
         where: {
           userId: user.id,
         },
@@ -163,7 +128,6 @@ exports.getUserData = async (req, res) => {
     });
     if (user.userTypeId !== 1) {
       const foundUser = await getUserDataByRole(user);
-      // console.log("Flattened: ", flattenUserObject(manager.user));
       return res.status(200).json({
         success: true,
         user: flatten.flattenObject(foundUser.toJSON()),
@@ -244,9 +208,7 @@ exports.resetPasswordRequest = async (req, res) => {
         message: "Email entered is wrong or user doesn't exist!",
       });
     }
-
-    // const link = await passwordReset.requestPasswordReset(user)
-    const link = await ResetPasswordToken.createToken(user);
+    const link = await Token.createResetPasswordToken(user);
 
     return res.status(200).json({
       success: true,
@@ -260,13 +222,10 @@ exports.resetPasswordRequest = async (req, res) => {
     });
   }
 };
-
 exports.newPassword = async (req, res) => {
   const { email, token, newPassword } = req.body;
 
   try {
-    // const passwordResetService = await passwordReset.changePassword(email, token, password)
-
     const user = await User.findOne({
       where: {
         email: email,
@@ -276,9 +235,10 @@ exports.newPassword = async (req, res) => {
       throw new Error("Provided user doesn't exist!");
     }
 
-    let passwordResetToken = await ResetPasswordToken.findOne({
+    let passwordResetToken = await Token.findOne({
       where: {
         userId: user.id,
+        token_type: 1,
       },
     });
 
@@ -293,7 +253,6 @@ exports.newPassword = async (req, res) => {
     if (!isValid) {
       throw new Error("Invalid or expired password reset token!");
     }
-    // const hashedPassword = await hashOperations.hashSecret(newPassword)
     await user.update({
       password: newPassword,
     });
@@ -320,8 +279,6 @@ exports.newPassword = async (req, res) => {
 };
 
 exports.changeProfilePicture = async (req, res) => {
-  // const { userId } = req.body;
-
   try {
     if (req.file === undefined) {
       return res.status(400).json({
@@ -393,7 +350,6 @@ exports.changeProfilePicture = async (req, res) => {
 exports.getNewUser = async (req, res) => {
   try {
     const newUser = await User.findOne({
-      // TODO: give me only
       where: {
         id: req.id,
         isFinalized: false,

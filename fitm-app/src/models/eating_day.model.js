@@ -7,10 +7,6 @@ module.exports = (sequelizeConn, DataTypes) => {
         primaryKey: true,
         autoIncrement: true,
       },
-      // date: {  TODO: Should i remove it?
-      //     type: DataTypes.DATEONLY,
-      //     allowNull: false
-      // }
     },
     {
       freezeTableName: true,
@@ -40,7 +36,6 @@ module.exports = (sequelizeConn, DataTypes) => {
       onDelete: "cascade",
       onUpdate: "cascade",
     });
-    //TRUE
     EatingDay.belongsTo(models.meal_plan, {
       foreignKey: {
         allowNull: false,
@@ -48,7 +43,6 @@ module.exports = (sequelizeConn, DataTypes) => {
       onDelete: "cascade",
       onUpdate: "cascade",
     });
-    //TRUE
     EatingDay.belongsTo(models.day_of_week, {
       foreignKey: {
         allowNull: false,

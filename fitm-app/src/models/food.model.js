@@ -46,6 +46,9 @@ module.exports = (sequelizeConn, DataTypes) => {
 
   Food.associate = (models) => {
     Food.belongsTo(models.food_info, {
+      foreignKey: {
+        allowNull: false,
+      },
       onDelete: "cascade",
       onUpdate: "cascade",
     });

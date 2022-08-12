@@ -5,7 +5,6 @@ class AuthService {
   async login(user) {
     const response = await API().post("/auth/login", user);
     if (response.data.accessToken) {
-      // localStorage.setItem('user', JSON.stringify(response.data))
       TokenService.setUser(response.data);
     }
     return response.data;

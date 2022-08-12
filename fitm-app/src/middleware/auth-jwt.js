@@ -1,6 +1,7 @@
 const jwt = require("jsonwebtoken");
 const { Op } = require("sequelize");
-const { JWT_SECRET } = require("../../config/config");
+const env = process.env.NODE_ENV || "development";
+const { JWT_SECRET } = require("../../config/config")[env];
 const db = require("../models");
 const User = db.user;
 const Client = db.client;
@@ -81,28 +82,6 @@ const isManager = async (req, res, next) => {
     req.managerId = manager.id;
     return next();
   }
-
-  // const manager = await Manager.findOne({
-  //   where: {
-  //     [Op.and]: [
-  //       {
-  //         id: req.id,
-  //       },
-  //       {
-  //         userTypeId: 2, // Manager
-  //       },
-  //     ],
-  //   },
-  // });
-  // if (!manager) {
-  //   return res.status(403).json({
-  //     success: false,
-  //     message: "Manager Unauthorized!",
-  //   });
-  // } else {
-  //   console.log(manager);
-  //   return next();
-  // }
 };
 
 const isClient = async (req, res, next) => {

@@ -1,15 +1,15 @@
 const db = require("../models");
 const { hashOperations, getValidationErrors } = require("../utils");
-const { JWT_SECRET, JWT_EXPIRATION } = require("../../config/config");
+const env = process.env.NODE_ENV || "development";
+const { JWT_SECRET, JWT_EXPIRATION } = require("../../config/config")[env];
 const User = db.user;
 const Manger = db.manager;
 const FitnessInstructor = db.fitness_instructor;
 const Employee = db.employee;
 const Membership = db.membership;
 const Client = db.client;
-const RefreshToken = db.refreshToken;
+const Token = db.token;
 const jwt = require("jsonwebtoken");
-const { fullName } = require("../utils/regex");
 
 const checkUserType = async (userTypeId, userId) => {
   let result = null;
@@ -90,7 +90,7 @@ exports.authenticateUser = async (req, res) => {
         }
       );
       if (rememberUser) {
-        let refreshToken = await RefreshToken.createToken(user);
+        let refreshToken = await Token.createRefreshToken(user);
         const currDate = new Date(2147483647 * 1000);
         res.cookie("refreshToken", refreshToken, {
           httpOnly: true,
@@ -109,17 +109,12 @@ exports.authenticateUser = async (req, res) => {
           userRole,
         });
       }
-      // res.cookie("accessToken", token, {
-      //   httpOnly: true,
-      //   maxAge: 100000
-      // })
       return res.json({
         userId: user.id,
         username: user.username,
         userType: user.userTypeId,
         remember: rememberUser,
         accessToken: token,
-        // refreshToken: refreshToken,
       });
     } else {
       return res.status(401).json({
@@ -136,10 +131,6 @@ exports.authenticateUser = async (req, res) => {
 };
 
 exports.refreshToken = async (req, res) => {
-  // const {
-  //   refreshToken: requestToken
-  // } = req.body;
-
   try {
     const refToken = req.cookies["refreshToken"];
 
@@ -150,9 +141,10 @@ exports.refreshToken = async (req, res) => {
       });
     }
 
-    let refreshToken = await RefreshToken.findOne({
+    let refreshToken = await Token.findOne({
       where: {
         token: refToken,
+        token_type: 2,
       },
     });
     console.log(refreshToken);
@@ -163,8 +155,8 @@ exports.refreshToken = async (req, res) => {
       });
       return;
     }
-    if (RefreshToken.verifyExpiration(refreshToken)) {
-      RefreshToken.destroy({
+    if (Token.verifyExpiration(refreshToken)) {
+      Token.destroy({
         where: {
           id: refreshToken.id,
         },
@@ -187,10 +179,6 @@ exports.refreshToken = async (req, res) => {
         expiresIn: JWT_EXPIRATION,
       }
     );
-    // res.cookie('accessToken', newAccessToken, {
-    //   httpOnly: true,
-    //   maxAge: 61
-    // })
     return res.status(200).json({
       success: true,
       accessToken: newAccessToken,
@@ -208,7 +196,7 @@ exports.logout = async (req, res) => {
   try {
     const refToken = req.cookies["refreshToken"];
     if (refToken) {
-      await RefreshToken.destroy({
+      await Token.destroy({
         where: {
           token: refToken,
         },
@@ -246,17 +234,10 @@ exports.finalizeAccount = async (req, res) => {
         isFinalized: false,
       },
     });
-    // const manager = await Manger.findOne({
-    //   where: {
-    //     userId: userId,
-    //   },
-    // });
     if (!user) {
       throw new Error("Couldn't find user");
     }
-    // const hashedPassword = await hashOperations.hashSecret(password)
     if (user.userTypeId === 3) {
-      // if user is fitness_instructor
       const instructor = await FitnessInstructor.findOne({
         where: {
           userId: user.id,
@@ -279,9 +260,6 @@ exports.finalizeAccount = async (req, res) => {
       password: password,
       isFinalized: true,
     });
-    // await manager.update({
-    //   firstLogin: false,
-    // });
 
     return res.status(200).json({
       success: true,

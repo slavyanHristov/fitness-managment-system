@@ -1,7 +1,7 @@
 <script setup>
 import { inject, ref } from "vue";
 import Modal from "@/components/ui/Modal.vue";
-import EditEmployee from "@/components/ui/EditEmployee.vue";
+import EditEmployee from "@/components/ui/manager-components/EditEmployee.vue";
 const props = defineProps(["item"]);
 const emit = defineEmits(["refreshEmployees"]);
 const apiUrlPath = inject("apiUrlPath");

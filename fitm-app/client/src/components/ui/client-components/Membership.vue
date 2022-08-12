@@ -4,20 +4,18 @@ import { useAuthStore } from "@/stores/authStore";
 import { useRoute, useRouter } from "vue-router";
 import FullAccessService from "@/services/API-calls/FullAccessService";
 import ClientService from "@/services/API-calls/ClientService";
-import MembershipCard from "./MembershipCard.vue";
-import Spinner from "./Spinner.vue";
-import Toast from "./Toast.vue";
-import ErrorIcon from "../icons/ErrorIcon.vue";
+import MembershipCard from "@/components/ui/client-components/MembershipCard.vue";
+import Spinner from "@/components/ui/Spinner.vue";
+import Toast from "@/components/ui/Toast.vue";
+import ErrorIcon from "@/components/icons/ErrorIcon.vue";
 
 const toastMsg = ref("");
-// const toastType = ref(null);
 const route = useRoute();
 const router = useRouter();
 const foundGym = ref(null);
 const loading = ref(false);
 const authStore = useAuthStore();
 let redirectTimer = null;
-// const myfee = ref(null);
 const { id } = route.params;
 const getGymData = async () => {
   try {
@@ -59,10 +57,6 @@ const membershipData = ref({
   fee: null,
 });
 
-// const gymPaymentData = ref({
-//   fee: foundGym.value.monthly_cost,
-//   name: foundGym.value.name,
-// });
 const showToastAndRedirect = (message, pageToRedirect) => {
   toastMsg.value = message;
   redirectTimer = setTimeout(() => {
@@ -82,13 +76,12 @@ const createMembership = async (membershipType, fee) => {
     console.log("MEMBERSHIP", membershipData.value);
     loading.value = true;
     const payResponse = await ClientService.payMembership(membershipData.value);
-    // const response = await ClientService.createMembership(membershipData.value);
+
     if (payResponse.status === 200) {
       loading.value = false;
       console.log(payResponse);
       window.location = payResponse.data.forwardLink;
     }
-    // console.log(response);
   } catch (err) {
     loading.value = false;
     showToastAndRedirect(err.response.data.message, "home");
@@ -98,9 +91,6 @@ const createMembership = async (membershipType, fee) => {
 onUnmounted(() => {
   if (redirectTimer) clearTimeout(redirectTimer);
 });
-// onMounted(async () => {
-//   console.log(id);
-// });
 </script>
 <template>
   <div
@@ -124,26 +114,5 @@ onUnmounted(() => {
         @on-button-click="createMembership(membership.id, membership.fee)"
       />
     </div>
-    <!-- <div>
-      <h1>Daily</h1>
-      {{ foundGym.monthly_cost * 0.1 }}
-      <button @click="createMembership(1, foundGym.monthly_cost * 0.1)">
-        Buy Now
-      </button>
-    </div>
-    <div>
-      <h1>Monthly</h1>
-      {{ foundGym.monthly_cost }}
-      <button @click="createMembership(2, foundGym.monthly_cost)">
-        Buy Now
-      </button>
-    </div>
-    <div>
-      <h1>Yearly</h1>
-      {{ foundGym.monthly_cost * 11 }}
-      <button @click="createMembership(3, foundGym.monthly_cost * 11)">
-        Buy Now
-      </button>
-    </div> -->
   </div>
 </template>

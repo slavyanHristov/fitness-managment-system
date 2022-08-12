@@ -7,6 +7,7 @@
     "test": "jest --watchAll --verbose",
     "client": "cd client && npm run dev",
     "server": "cd src && nodemon server.js",
+    "start": "cd src && node server.js",
     "app": "concurrently -n \"server,client\" -c \"bgYellow,bgGreen\" \"npm run server\" \"npm run client\""
   },
   "author": "Slavyan Hristov",

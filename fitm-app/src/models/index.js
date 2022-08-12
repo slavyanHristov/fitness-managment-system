@@ -1,7 +1,8 @@
 const fs = require("fs");
 const path = require("path");
 const Sequelize = require("sequelize");
-const config = require("../../config/config");
+const env = process.env.NODE_ENV || "development";
+const config = require("../../config/config")[env];
 const basename = path.basename(__filename);
 const sequelize = new Sequelize(config.DB, config.USER, config.PASSWORD, {
   host: config.HOST,
@@ -10,7 +11,7 @@ const sequelize = new Sequelize(config.DB, config.USER, config.PASSWORD, {
   dialectOptions: {
     timezone: "local",
   },
-  logging: true // false => to disable logging
+  logging: true, // false => to disable logging
 });
 const db = {};
 

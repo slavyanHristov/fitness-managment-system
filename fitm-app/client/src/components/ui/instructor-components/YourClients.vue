@@ -8,7 +8,7 @@ import WarningIcon from "@/components/icons/WarningIcon.vue";
 import SearchFilter from "@/components/ui/SearchFilter.vue";
 import GridContainer from "../GridContainer.vue";
 import { filterBySingle } from "@/utils/filtrationsAndSorts";
-import ClientCard from "../ClientCard.vue";
+import ClientCard from "@/components/ui/instructor-components/ClientCard.vue";
 import AllGymsSkeleton from "@/components/skeleton-loaders/AllGymsSkeleton.vue";
 
 const clientsCollection = ref(null);

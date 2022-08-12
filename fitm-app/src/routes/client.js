@@ -3,16 +3,6 @@ const { authJwt } = require("../middleware");
 const router = express.Router();
 const controller = require("../controllers/client.controller");
 
-router.post(
-  "/membership/create",
-  [authJwt.verifyToken, authJwt.isClient],
-  controller.createMembership
-);
-router.post(
-  "/membership/verifyEndDate",
-  [authJwt.verifyToken, authJwt.isClient],
-  controller.verifyEndDate
-);
 router.patch(
   "/setInstructor/:id",
   [authJwt.verifyToken, authJwt.isClient],

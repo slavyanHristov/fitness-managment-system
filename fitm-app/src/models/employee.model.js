@@ -19,24 +19,6 @@ module.exports = (sequelizeConn, DataTypes) => {
           },
         },
       },
-      // firstName: {
-      //   type: DataTypes.STRING(45),
-      //   validate: {
-      //     is: {
-      //       args: regularExpressions.name.regex,
-      //       msg: regularExpressions.name.msg,
-      //     },
-      //   },
-      // },
-      // lastName: {
-      //   type: DataTypes.STRING(45),
-      //   validate: {
-      //     is: {
-      //       args: regularExpressions.name.regex,
-      //       msg: regularExpressions.name.msg,
-      //     },
-      //   },
-      // },
       salary: {
         type: DataTypes.FLOAT(11),
         validate: {
@@ -86,13 +68,6 @@ module.exports = (sequelizeConn, DataTypes) => {
   );
 
   Employee.associate = (models) => {
-    // Employee.hasMany(models.fitness_instructor, {
-    //   foreignKey: {
-    //     allowNull: false,
-    //   },
-    //   onDelete: "cascade",
-    //   onUpdate: "cascade",
-    // });
     Employee.belongsTo(models.fitness_instructor, {
       foreignKey: {
         allowNull: true,

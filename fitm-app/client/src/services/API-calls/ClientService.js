@@ -1,14 +1,8 @@
 import ProtectedAPI from "../axios-instances/ProtectedAPI";
 
 class ClientAPI {
-  createMembership(membershipData) {
-    return ProtectedAPI().post("/client/membership/create", membershipData);
-  }
   getDashboardData() {
     return ProtectedAPI().get("/client/dashboard-data");
-  }
-  validateMembership() {
-    return ProtectedAPI().post("/client/membership/verifyEndDate");
   }
   setInstructor(instructorId) {
     return ProtectedAPI().patch(`/client/setInstructor/${instructorId}`);

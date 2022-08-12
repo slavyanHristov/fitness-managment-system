@@ -39,6 +39,10 @@ const regularExpressions = {
     regex: /^\d{3,4}(?:\.\d{0,2})?$/,
     msg: "Salary is not valid(should be between 3 and 6 digit length)",
   },
+  description: {
+    regex: /^[a-zA-Z0-9\s.,''""-()]*$/,
+    msg: "Only letters, numbers and (),'',\"\",-,.,, are allowed for description!",
+  },
 };
 
 module.exports = regularExpressions;

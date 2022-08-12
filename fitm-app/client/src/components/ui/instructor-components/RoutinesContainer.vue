@@ -1,9 +1,9 @@
 <script setup>
 import { ref } from "vue";
-import RoutineItem from "./RoutineItem.vue";
+import RoutineItem from "@/components/ui/instructor-components/RoutineItem.vue";
 import Modal from "@/components/ui/Modal.vue";
-import CreateRoutine from "@/components/ui/CreateRoutine.vue";
-import MainButton from "./MainButton.vue";
+import CreateRoutine from "@/components/ui/instructor-components/CreateRoutine.vue";
+import MainButton from "@/components/ui/MainButton.vue";
 import NotFoundResource from "@/components/ui/NotFoundResource.vue";
 // const emit = defineEmits(["refreshItems"]);
 const isModalOpen = ref(false);

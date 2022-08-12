@@ -13,9 +13,6 @@ class InstructorAPI {
   getYourClients() {
     return ProtectedAPI().get("/instructor/clients");
   }
-  // getRoutine(routineId) {
-  //   return ProtectedAPI().get(`/instructor/routines/${routineId}`);
-  // }
   getWorkouts(routineId) {
     return ProtectedAPI().get(`/instructor/routines/workouts/${routineId}`);
   }
@@ -39,9 +36,6 @@ class InstructorAPI {
       `/instructor/edit/client/${clientId}`,
       clientData
     );
-  }
-  testingFind() {
-    return ProtectedAPI().get("/instructor/find-bulk");
   }
   createMealPlan(mealPlanData) {
     return ProtectedAPI().post("/instructor/meal-plan/create", mealPlanData);

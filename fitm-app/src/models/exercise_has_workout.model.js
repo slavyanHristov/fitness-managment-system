@@ -22,31 +22,15 @@ module.exports = (sequelizeConn, DataTypes) => {
   );
 
   ExerciseHasWorkout.associate = (models) => {
-    ExerciseHasWorkout.belongsToMany(models.routine, {
-      through: models.exercise_workout_routine,
-      onDelete: "cascade",
-      onUpdate: "cascade",
-    });
-
     ExerciseHasWorkout.belongsTo(models.exercise, {
       foreignKey: {
         allowNull: false,
-        // unique: false,
       },
       onDelete: "cascade",
       onUpdate: "cascade",
     });
 
     ExerciseHasWorkout.belongsTo(models.workout, {
-      foreignKey: {
-        allowNull: false,
-        // unique: false,
-      },
-      onDelete: "cascade",
-      onUpdate: "cascade",
-    });
-
-    ExerciseHasWorkout.hasMany(models.exercise_workout_routine, {
       foreignKey: {
         allowNull: false,
       },

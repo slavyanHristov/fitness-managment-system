@@ -1,13 +1,11 @@
 const createServer = require("./app");
-const {
-  PORT,
-  BCRYPT_SALT
-} = require("../config/config");
+const env = process.env.NODE_ENV || "development";
+const { PORT, BCRYPT_SALT } = require("../config/config")[env];
 const dbOperations = require("./utils/db-operations");
 const app = createServer();
 const start = () => {
   try {
-    app.listen(PORT, async () => {
+    app.listen(process.env.PORT || PORT, async () => {
       console.log(`Server is listening on PORT: ${PORT}`);
       await dbOperations.syncWithDB();
       // var io = require("socket.io")(server)

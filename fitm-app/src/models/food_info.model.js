@@ -27,7 +27,6 @@ module.exports = (sequelizeConn, DataTypes) => {
         type: DataTypes.FLOAT(6),
         allowNull: false,
       },
-      //TODO: Separate Table?
       grams: {
         type: DataTypes.FLOAT(6),
         allowNull: true,
