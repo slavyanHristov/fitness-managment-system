@@ -209,14 +209,17 @@ const registerAction = async () => {
         </div>
       </div>
       <div id="right" class="w-full">
-        <form class="" @submit.prevent="registerAction">
+        <form
+          class="bg-inherit bg-accentWhite dark:bg-accentDark"
+          @submit.prevent="registerAction"
+        >
           <div
             class="flex flex-col justify-center p-6 transition-all shadow-sm rounded-r-md bg-primaryBgWhite dark:bg-accentDark"
           >
             <h1 class="block mb-8 text-center uppercase lg:hidden font-poppins">
               Manager registration
             </h1>
-            <div v-for="field in user" :key="field.id">
+            <div v-for="field in user" :key="field.id" class="bg-inherit">
               <InputField
                 v-model:inputContent="field.value"
                 :label-text="field.label"

@@ -11,9 +11,9 @@ const selectItem = (index) => {
 <template>
   <div
     id="sort"
-    class="flex p-2.5 flex-col items-center justify-center w-full h-full rounded-lg bg-primaryWhite dark:bg-testColor"
+    class="flex p-1.5 flex-col items-center justify-center w-full h-full rounded-lg bg-primaryWhite dark:bg-testColor"
   >
-    <h3 class="mb-2.5 font-poppins-light font-light uppercase tracking-wide">
+    <h3 class="mb-1.5 font-poppins-light font-light uppercase tracking-wide">
       Sort by
     </h3>
     <div id="buttons" class="flex mb-2.5 flex-col items-center justify-center">

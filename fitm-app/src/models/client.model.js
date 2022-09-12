@@ -80,18 +80,6 @@ module.exports = (sequelizeConn, DataTypes) => {
     }
   );
 
-  Client.resetMembershipExtras = async (client) => {
-    if (client.fitnessInstructorId !== null || client.routineId !== null) {
-      client.fitnessInstructorId = null;
-      client.routineId = null;
-      await client.save().catch(() => {
-        throw new Error("Something went wrong with client update!");
-      });
-      return;
-    }
-    return;
-  };
-
   Client.associate = (models) => {
     Client.hasMany(models.membership, {
       foreignKey: {

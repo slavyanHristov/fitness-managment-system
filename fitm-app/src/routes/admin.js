@@ -1,6 +1,5 @@
 const express = require("express");
-const { authJwt, upload, checkFileType, updates } = require("../middleware");
-const multer = require("multer");
+const { authJwt, upload, checkFileType } = require("../middleware");
 
 const router = express.Router();
 const controller = require("../controllers/admin.controller");

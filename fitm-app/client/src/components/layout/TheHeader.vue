@@ -77,7 +77,7 @@ onMounted(() => {
             <router-link
               id="link"
               class="router-views"
-              :to="{ name: 'register' }"
+              :to="{ name: 'registerClient' }"
               >Register</router-link
             >
           </div>

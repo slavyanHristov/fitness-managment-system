@@ -289,16 +289,9 @@ const createGym = async () => {
     if (hasValidationPassed) {
       const formData = appendToFormData();
       const response = await AdminService.registerGym(formData);
-      // isSuccessful.value = true;
-      // successMessage.value = response.data.message;
+
       console.log(response);
       showToastAndRedirect("success", response.data.message, "adminDashboard");
-      // toastType.value = "success";
-      // toastMsg.value = response.data.message;
-      // redirectTimer = setTimeout(() => {
-      //   toastMsg.value = "";
-      //   router.push({ name: "adminDashboard" });
-      // }, 1500);
     }
   } catch (err) {
     if (err.response && err.response.data) {

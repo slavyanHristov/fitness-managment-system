@@ -1,92 +1,18 @@
 const db = require("../models");
-const { upload } = require("../middleware");
-// const nodemailer = require('nodemailer')
-// const sgMail = require("@sendgrid/mail")
-// const {
-//     SENDGRID_API_KEY,
-//     EMAIL
-// } = require("../../config/config")
-const { mailSender, getValidationErrors, flatten } = require("../utils");
-const fs = require("fs");
-const path = require("path");
-const User = db.user;
-const Gym = db.gym;
-const Manager = db.manager;
-const Address = db.address;
-const City = db.city;
-const Country = db.country;
-const Image = db.image;
-const Employee = db.employee;
-const FitnessInstructor = db.fitness_instructor;
+const adminService = require("../services/adminService");
 
-const uploadsPath = "/resources/static/assets/uploads/";
-
-// TODO: Think of moving this statement to utils directory
-const gymInnerJoins = [
-  {
-    model: Manager,
-    attributes: ["name", "userId"],
-    required: true,
-    include: [
-      {
-        model: User,
-        attributes: ["username", "email"],
-        required: true,
-      },
-    ],
-  },
-  {
-    model: Address,
-    attributes: ["name", "cityId"], // ATTRIBUTES RETURNED
-    required: true, // INNER JOIN
-    include: [
-      {
-        model: City,
-        attributes: ["name", "countryId"],
-        required: true,
-        include: [
-          {
-            model: Country,
-            attributes: ["name"],
-            required: true,
-          },
-        ],
-      },
-    ],
-  },
-  {
-    model: Image,
-    attributes: ["path"],
-    required: true,
-  },
-];
-
-const managerInnerJoins = [
-  {
-    model: User,
-    attributes: ["name", "username", "email"],
-    required: true,
-  },
-];
+const { getValidationErrors, flatten } = require("../utils");
 
 // -------------- Get all gyms --------------
 exports.getAllGyms = async (req, res) => {
-  const allGyms = await Gym.findAll({
-    include: gymInnerJoins,
-  });
   try {
-    if (!allGyms) {
-      return res.status(404).json({
-        success: false,
-        message: "There are no gyms in the database!",
-      });
-    }
+    const allGyms = await adminService.getAllGyms();
     return res.status(200).json({
       success: true,
       allGyms,
     });
   } catch (err) {
-    return res.status(500).json({
+    return res.status(err?.status || 500).json({
       success: false,
       message: err.message,
     });
@@ -96,27 +22,15 @@ exports.getAllGyms = async (req, res) => {
 // -------------- Get a single Gym --------------
 exports.getOneGym = async (req, res) => {
   const id = req.params.id;
-  const foundGym = await Gym.findOne({
-    where: {
-      id: id, // Condition
-    },
-    include: gymInnerJoins,
-  });
-
   try {
-    if (!foundGym) {
-      return res.status(404).json({
-        success: false,
-        message: "Gym not found!",
-      });
-    }
+    const foundGym = await adminService.getOneGym(id);
     return res.status(200).json({
       success: true,
       message: "Gym has been found!",
       foundGym,
     });
   } catch (err) {
-    return res.status(500).json({
+    return res.status(err?.status || 500).json({
       success: false,
       message: err.message,
     });
@@ -133,27 +47,14 @@ exports.deleteGym = async (req, res) => {
       message: "Provide gym id!",
     });
   }
-
-  const foundGym = await Gym.findOne({
-    where: {
-      id,
-    },
-  });
-
-  if (!foundGym) {
-    return res.status(404).json({
-      success: false,
-      message: "Gym not found!",
-    });
-  }
   try {
-    await foundGym.destroy();
+    await adminService.deleteGym(id);
     return res.status(200).json({
       success: true,
       message: "Gym has been deleted!",
     });
   } catch (err) {
-    return res.status(500).json({
+    return res.status(err?.status || 500).json({
       success: false,
       message: err.message,
     });
@@ -163,71 +64,13 @@ exports.deleteGym = async (req, res) => {
 // -------------- Update a Gym --------------
 exports.updateGym = async (req, res) => {
   const id = req.params.id;
-  const t = await db.sequelize.transaction().catch((err) => {
-    return res.status(500).json({
-      success: false,
-      message: `TRANSACTION ERROR: ${err}`,
-    });
-  });
   try {
-    //TODO: Maybe move the update in a middle ware and call it before upload
-    const updatedGym = await Gym.update(req.body, {
-      where: {
-        id: id,
-      },
-      transaction: t,
-    });
-
-    console.log("req files:", req.files);
-
-    if (req.files.length !== 0) {
-      console.log(req.files);
-      const images = req.files;
-      const oldGymImages = await Image.findAll({
-        where: {
-          gymId: id,
-        },
-      });
-      for (const oldImg of oldGymImages) {
-        fs.unlink(
-          __basedir + uploadsPath + path.basename(oldImg.path),
-          (err) => {
-            if (err) throw err;
-            console.log("Old gym images have been deleted!");
-          }
-        );
-      }
-      await Image.destroy({
-        where: {
-          gymId: id,
-        },
-      });
-      for (const img of images) {
-        const newImg = await Image.create(
-          {
-            type: img.mimetype,
-            name: img.originalname,
-            path: `resources/uploads/${img.filename}`,
-            gymId: id,
-          },
-          { transaction: t }
-        );
-      }
-    }
-
-    // if (!updatedGym) {
-    //   return res.status(404).json({
-    //     success: false,
-    //     message: "Record not found!",
-    //   });
-    // }
-    await t.commit();
+    await adminService.updateGym(id, req.body, req.files);
     return res.status(200).json({
       success: true,
       message: "Gym updated successfully!",
     });
   } catch (err) {
-    await t.rollback();
     if (err instanceof db.Sequelize.ValidationError) {
       return res.status(400).json({
         success: false,
@@ -245,23 +88,15 @@ exports.updateGym = async (req, res) => {
 // -------------- Get All Managers --------------
 exports.getAllManagers = async (req, res) => {
   try {
-    const allManagers = await Manager.findAll({
-      include: managerInnerJoins,
-    });
-    if (allManagers.length === 0) {
-      return res.status(404).json({
-        success: false,
-        message: "There are no managers in the database!",
-      });
-    }
+    const allManagers = await adminService.getAllManagers();
     return res.status(200).json({
       success: true,
       allManagers,
     });
   } catch (err) {
-    return res.status(500).json({
+    return res.status(err?.status || 500).json({
       success: false,
-      message: err.message,
+      message: err?.message || err,
     });
   }
 };
@@ -269,20 +104,8 @@ exports.getAllManagers = async (req, res) => {
 // -------------- Get a Single Manager --------------
 exports.getOneManager = async (req, res) => {
   const id = req.params.id;
-  const foundManager = await Manager.findOne({
-    where: {
-      id: id, // Condition
-    },
-    include: managerInnerJoins,
-  });
-
   try {
-    if (!foundManager) {
-      return res.status(404).json({
-        success: false,
-        message: "Manager not found!",
-      });
-    }
+    const foundManager = await adminService.getOneManager(id);
     return res.status(200).json({
       success: true,
       message: "Manager has been found!",
@@ -299,15 +122,7 @@ exports.getOneManager = async (req, res) => {
 exports.sendMailManager = async (req, res) => {
   const { sender, recipient, subject, tempPassword } = req.body;
 
-  const msg = {
-    from: `"Fit-M Staff" <${sender}>`, // sender address
-    to: `${recipient}`, // list of receivers
-    subject: `${subject}`, // Subject line
-    text: `You've been hired! First Login Password: ${tempPassword}`, // plain text body
-    html: "<b>You've been hired!</b>", // html body
-  };
-
-  await mailSender.sendMailEthereal(msg);
+  await adminService.sendMailManager(sender, recipient, subject, tempPassword);
 
   res.status(200).json({
     success: true,
@@ -317,39 +132,7 @@ exports.sendMailManager = async (req, res) => {
 
 exports.getDashboardData = async (req, res) => {
   try {
-    const gymsCount = await Gym.count();
-    const employees = await Employee.findAll({
-      attributes: ["id", "name", "position"],
-      order: [["createdAt", "DESC"]],
-      include: [
-        {
-          attributes: [["name", "gym"]],
-          model: Gym,
-        },
-        {
-          model: FitnessInstructor,
-          include: [
-            {
-              attributes: ["imageId"],
-              model: User,
-              include: [
-                {
-                  model: Image,
-                  attributes: ["path"],
-                },
-              ],
-            },
-          ],
-        },
-      ],
-      limit: 3, //TODO: Should i leave this?
-    });
-    // if (gymsCount === 0 || employees.length === 0) {
-    //   return res.status(404).json({
-    //     success: false,
-    //     message: "Nothing found.",
-    //   });
-    // }
+    const { gymsCount, employees } = await adminService.getDashboardData();
     return res.status(200).json({
       success: true,
       count: gymsCount,
@@ -366,16 +149,8 @@ exports.getDashboardData = async (req, res) => {
 exports.sendMail = async (req, res) => {
   const { recipient, subjectMsg, text } = req.body;
 
-  sgMail.setApiKey(SENDGRID_API_KEY);
   try {
-    const msg = {
-      to: `${recipient}`,
-      from: `${EMAIL}`,
-      subject: `${subjectMsg}`,
-      text: `${text}`,
-      html: "<strong>Hello there!</strong>",
-    };
-    const info = await sgMail.send(msg);
+    const info = await adminService.sendMail(recipient, subjectMsg, text);
     return res.status(200).json({
       success: true,
       message: "Message has been sent!",

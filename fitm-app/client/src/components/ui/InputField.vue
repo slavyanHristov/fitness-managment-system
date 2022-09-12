@@ -8,7 +8,7 @@ const props = defineProps([
   "failureErrors",
   "vuelidateErrors",
 ]);
-defineEmits(["update:inputContent"]);
+const emit = defineEmits(["update:inputContent"]);
 </script>
 
 <template>
@@ -33,7 +33,7 @@ defineEmits(["update:inputContent"]);
         placeholder=" "
         autocomplete="off"
         :value="props.inputContent"
-        @input="$emit('update:inputContent', $event.target.value)"
+        @input="emit('update:inputContent', $event.target.value)"
       />
       <label id="label-input" class="label bg-inherit" :for="props.inputId">
         {{ props.labelText }}

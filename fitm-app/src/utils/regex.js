@@ -40,7 +40,7 @@ const regularExpressions = {
     msg: "Salary is not valid(should be between 3 and 6 digit length)",
   },
   description: {
-    regex: /^[a-zA-Z0-9\s.,''""-()]*$/,
+    regex: /^[a-zA-Z0-9\s.,!''""\-()]*$/,
     msg: "Only letters, numbers and (),'',\"\",-,.,, are allowed for description!",
   },
 };

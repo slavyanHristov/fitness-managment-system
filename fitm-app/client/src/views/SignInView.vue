@@ -37,13 +37,6 @@ const pushToDashboard = (user) => {
       break;
   }
 };
-// const pushToDashboard = (user) => {
-//   user["userType"] === 1
-//     ? router.push({ name: "adminDashboard" })
-//     : user["userType"] === 2
-//     ? router.push({ name: "managerDashboard" })
-//     : router.push({ name: "home" });
-// };
 
 const loginAction = async () => {
   errorMsg.value = "";
@@ -56,42 +49,10 @@ const loginAction = async () => {
     errorMsg.value = err.response.data.message;
     console.log(err.response.data.message);
   }
-
-  // authStore.login(user.value).then(
-  //   () => {
-  //     isSuccessful.value = true;
-  //     console.log("Authenticated");
-  //     router.push({ name: "adminDashboard" });
-  //   },
-  //   (err) => {
-  //     errorMsg.value = err.response.data.message;
-  //     console.log(err.response.data.message);
-  //   }
-  // );
-
-  // try {
-  //   errorMsg.value = "";
-  //   isSuccessful.value = false;
-  //   const response = await AuthAPI.authUser(user.value);
-  //   store.setToken(response.data.accessToken);
-  //   store.setUserId(response.data.userId);
-  //   isSuccessful.value = true;
-  // } catch (err) {
-  //   errorMsg.value = err.response.data.message;
-  //   console.log(err.response.data.message);
-  // }
 };
 const setModal = () => {
   isModalOpen.value = true;
 };
-
-// const testProtectedAction = async () => {
-//   // try {
-//   //   const response = await AdminAPI.getManagers();
-//   // } catch (err) {
-//   //   console.log(err.response.data);
-//   // }
-// };
 </script>
 
 <template>

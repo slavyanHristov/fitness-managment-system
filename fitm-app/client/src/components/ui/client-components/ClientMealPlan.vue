@@ -35,7 +35,6 @@ const getMealPlan = async () => {
     mealPlan.value = response.data.mealPlan;
     eatingDays.value = mealPlan.value.meal_plan.eating_days;
     clientCalories.value = mealPlan.value.calories;
-    // currentDay.value = eatingDays.value[0].id;
     console.log(mealPlan.value);
   } catch (err) {
     noMealPlan.value = true;
@@ -50,7 +49,6 @@ const getMealPlan = async () => {
       else if (err.response.status === 404) redirectPage = "clientDashboard";
       showToastAndRedirect(err.response.data.message, redirectPage);
     }
-    // router.push({ name: "notFound" });
   }
 };
 
@@ -85,8 +83,6 @@ const prevDay = () => {
 
 const reduced = (coll) => {
   return coll.reduce((prev, curr) => {
-    console.log(prev);
-    console.log(curr.food);
     return (
       prev +
       curr.food.reduce((prev, curr) => {

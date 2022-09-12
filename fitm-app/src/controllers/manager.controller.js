@@ -1,64 +1,5 @@
-const db = require("../models");
+const managerService = require("../services/managerService");
 const { flatten } = require("../utils");
-const Employee = db.employee;
-const Manager = db.manager;
-const Image = db.image;
-const Gym = db.gym;
-const Membership = db.membership;
-const FitnessInstructor = db.fitness_instructor;
-const Client = db.client;
-const User = db.user;
-const Op = db.Sequelize.Op;
-
-const employeeInnerJoins = [
-  {
-    model: Gym,
-    attributes: ["name"],
-    required: true,
-  },
-  {
-    model: FitnessInstructor,
-    attributes: ["userId"],
-    include: [
-      {
-        model: User,
-        attributes: ["name", "username", "email"],
-        include: [
-          {
-            model: Image,
-            attributes: ["path"],
-          },
-        ],
-      },
-    ],
-  },
-];
-
-const membershipInnerJoins = [
-  {
-    model: Client,
-    attributes: ["name", "userId"],
-    required: true,
-    include: [
-      {
-        model: User,
-        attributes: ["username", "email"],
-        required: true,
-      },
-    ],
-  },
-];
-
-const getYourGyms = async (managerId) => {
-  const managedGyms = await Gym.findAll({
-    where: {
-      managerId: managerId,
-    },
-    attributes: ["id"],
-    raw: true,
-  });
-  return managedGyms.map((gym) => gym.id);
-};
 
 exports.getAssignedGyms = async (req, res) => {
   const managerId = req.params.managerId;
@@ -69,24 +10,13 @@ exports.getAssignedGyms = async (req, res) => {
         message: "Manager not found!",
       });
     }
-    const managedGyms = await Gym.findAll({
-      where: {
-        managerId: managerId,
-      },
-      attributes: ["id", "name"],
-    });
-    if (managedGyms.length === 0) {
-      return res.status(404).json({
-        success: false,
-        message: "There are no gyms in the database!",
-      });
-    }
+    const managedGyms = await managerService.getAssignedGyms(managerId);
     return res.status(200).json({
       success: true,
       managedGyms,
     });
   } catch (err) {
-    return res.status(500).json({
+    return res.status(err?.status || 500).json({
       success: false,
       message: err.message,
     });
@@ -95,37 +25,14 @@ exports.getAssignedGyms = async (req, res) => {
 
 // -------------- Get all employees associated with your gyms --------------
 exports.getAllEmployees = async (req, res) => {
-  const gymsArray = await getYourGyms(req.managerId);
   try {
-    const employees = await Employee.findAll({
-      attributes: [
-        "id",
-        "name",
-        "salary",
-        "position",
-        "shift_start",
-        "shift_end",
-        "phone",
-      ],
-      where: {
-        gymId: {
-          [Op.in]: gymsArray,
-        },
-      },
-      include: employeeInnerJoins,
-    });
-    if (employees.length === 0) {
-      return res.status(404).json({
-        success: false,
-        message: "Couldn't find employees.",
-      });
-    }
+    const employees = await managerService.getAllEmployees(req.managerId);
     return res.status(200).json({
       success: true,
       collection: employees,
     });
   } catch (err) {
-    return res.status(500).json({
+    return res.status(err?.status || 500).json({
       success: false,
       message: err.message,
     });
@@ -135,32 +42,15 @@ exports.getAllEmployees = async (req, res) => {
 
 exports.getOneEmployee = async (req, res) => {
   const employeeId = req.params.id;
-  const gymsArray = await getYourGyms(req.managerId);
-
-  const foundEmployee = await Employee.findOne({
-    where: {
-      gymId: {
-        [Op.in]: gymsArray,
-      },
-      id: employeeId,
-    },
-    include: employeeInnerJoins,
-  });
-
   try {
-    if (!foundEmployee) {
-      return res.status(404).json({
-        success: false,
-        message: "Employee not found!",
-      });
-    }
+    const foundEmployee = await managerService.getOneEmployee(req.managerId);
     return res.status(200).json({
       success: true,
       message: "Employee has been found!",
       foundEmployee,
     });
   } catch (err) {
-    return res.status(500).json({
+    return res.status(err?.status || 500).json({
       success: false,
       message: err.message,
     });
@@ -177,28 +67,14 @@ exports.deleteEmployee = async (req, res) => {
       message: "Provide employee id!",
     });
   }
-  console.log(req);
-  const employee = await Employee.findOne({
-    where: {
-      id: employeeId,
-      managerId: req.id,
-    },
-  });
-
-  if (!employee) {
-    return res.status(403).json({
-      success: false,
-      message: "Forbidden!",
-    });
-  }
   try {
-    await employee.destroy();
+    await managerService.deleteEmployee(employeeId, req.managerId);
     return res.status(200).json({
       success: true,
       message: "Employee has been deleted!",
     });
   } catch (err) {
-    return res.status(500).json({
+    return res.status(err?.status || 500).json({
       success: false,
       message: err.message,
     });
@@ -209,31 +85,19 @@ exports.deleteEmployee = async (req, res) => {
 
 exports.updateEmployee = async (req, res) => {
   const employeeId = req.params.id;
-  const gymsArray = await getYourGyms(req.managerId);
-
   try {
-    const updatedEmployee = await Employee.update(req.body, {
-      where: {
-        gymId: {
-          [Op.in]: gymsArray,
-        },
-        id: employeeId,
-      },
-    });
-    //TODO: THIS IF DOESN'T WORK
-    if (!updatedEmployee) {
-      return res.status(404).json({
-        success: false,
-        message: "Record not found!",
-      });
-    }
+    const updatedEmployee = await managerService.updateEmployee(
+      req.managerId,
+      employeeId,
+      req.body
+    );
     return res.status(200).json({
       success: true,
       message: "Employee updated successfully!",
       updatedEmployee,
     });
   } catch (err) {
-    return res.status(500).json({
+    return res.status(err?.status || 500).json({
       success: false,
       message: err.message,
     });
@@ -243,24 +107,8 @@ exports.updateEmployee = async (req, res) => {
 // -------------- Get all clients associated with your gym --------------
 
 exports.getAllClients = async (req, res) => {
-  const gymsArray = await getYourGyms(req.id);
-
   try {
-    const clientsInGym = await Membership.findAll({
-      where: {
-        gymId: {
-          [Op.in]: gymsArray,
-        },
-      },
-      attributes: ["clientId"],
-      include: membershipInnerJoins,
-    });
-    if (clientsInGym.length === 0) {
-      return res.status(404).json({
-        success: false,
-        message: "You don't have clients in your gyms!",
-      });
-    }
+    const clientsInGym = await managerService.getAllClients(req.managerId);
 
     return res.status(200).json({
       success: true,
@@ -268,7 +116,7 @@ exports.getAllClients = async (req, res) => {
       clientsInGym,
     });
   } catch (err) {
-    return res.status(500).json({
+    return res.status(err?.status || 500).json({
       success: false,
       message: err.message,
     });
@@ -279,33 +127,19 @@ exports.getAllClients = async (req, res) => {
 
 exports.getOneClient = async (req, res) => {
   const clientId = req.params.id;
-  const gymsArray = await getYourGyms(req.id);
 
   try {
-    const clientInGyms = await Membership.findOne({
-      where: {
-        gymId: {
-          [Op.in]: gymsArray,
-        },
-        clientId: clientId,
-      },
-      attributes: ["clientId"],
-      include: membershipInnerJoins,
-    });
-    if (!clientInGyms) {
-      return res.status(404).json({
-        success: false,
-        message: "Client not found!",
-      });
-    }
-
+    const clientInGyms = await managerService.getOneClient(
+      clientId,
+      req.managerId
+    );
     return res.status(200).json({
       success: true,
       message: "Client has been found!",
       clientInGyms,
     });
   } catch (err) {
-    return res.status(500).json({
+    return res.status(err?.status || 500).json({
       success: false,
       message: err.message,
     });
@@ -316,30 +150,13 @@ exports.getManager = async (req, res) => {
   const userId = req.params.userId;
 
   try {
-    const manager = await Manager.findOne({
-      where: {
-        userId: userId,
-      },
-      include: [
-        {
-          model: User,
-          attributes: ["name"],
-        },
-      ],
-    });
-    if (!manager) {
-      return res.status(200).json({
-        success: false,
-        message: "Manager doesn't exist or isn't found.",
-      });
-    }
-
+    const manager = await managerService.getManager(userId);
     return res.status(200).json({
       success: true,
       manager,
     });
   } catch (err) {
-    return res.status(500).json({
+    return res.status(err?.status || 500).json({
       success: false,
       message: err.message,
     });
@@ -348,71 +165,14 @@ exports.getManager = async (req, res) => {
 
 exports.getDashboardData = async (req, res) => {
   try {
-    const userData = await User.findOne({
-      where: {
-        id: req.id,
-      },
-      attributes: ["name", "imageId"],
-      include: [
-        {
-          model: Image,
-          attributes: ["path"],
-        },
-      ],
-    });
-
-    console.log("USER DATA: ", userData.toJSON());
-
-    const employeeCount = await Employee.count({
-      col: "managerId",
-      where: { managerId: req.managerId },
-    });
-    console.log("EMPLOYEE COUNT: ", employeeCount);
-    const yourGymsCount = await getYourGyms(req.managerId);
-    console.log("yourGymsCount: ", yourGymsCount);
-    const yourGyms = await Gym.findAll({
-      attributes: ["id", "name"],
-      where: {
-        managerId: req.managerId,
-      },
-    });
-    console.log("Your Gyms: ", yourGyms);
-    let gymImage = null;
-    if (yourGyms.length !== 0) {
-      gymImage = await Image.findOne({
-        attributes: ["path"],
-        where: {
-          gymId: yourGyms[0]?.id,
-        },
-      });
-    }
-    const memberships = await Membership.findAll({
-      attributes: ["fee"],
-      where: {
-        gymId: yourGymsCount,
-      },
-      include: [
-        {
-          model: Gym,
-          attributes: [["name", "gym"]],
-        },
-        {
-          model: Client,
-          attributes: ["userId"],
-          include: [
-            {
-              model: User,
-              attributes: ["name"],
-            },
-          ],
-        },
-      ],
-      limit: 3,
-    });
-    const membershipCount = await Membership.count({
-      col: "gymId",
-      where: { gymId: yourGymsCount },
-    });
+    const {
+      userData,
+      employeeCount,
+      membershipCount,
+      memberships,
+      yourGyms,
+      gymImage,
+    } = await managerService.getDashboardData(req.id, req.managerId);
 
     return res.status(200).json({
       success: true,

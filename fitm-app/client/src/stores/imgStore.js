@@ -18,7 +18,7 @@ export const useImgStore = defineStore({
     async getImageAsync() {
       try {
         const res = await UserService.getUserImage();
-        return Promise.resolve(res.data.userImage.image.path);
+        return Promise.resolve(res.data.userImage?.image.path);
       } catch (err) {
         return Promise.reject(err);
       }

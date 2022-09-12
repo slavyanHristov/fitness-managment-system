@@ -5,7 +5,7 @@ export const validateTimeFormat = helpers.regex(
   /^(0[0-9]|1[0-9]|2[0-3]):([0-5][0-9])(:([0-5][0-9]))?$/
 );
 export const validateGymName = helpers.regex(/^[A-Za-z\s,._+()*'&-]{2,}$/);
-export const validateDescription = helpers.regex(/^[a-zA-Z0-9\s.,''""-()]*$/);
+export const validateDescription = helpers.regex(/^[a-zA-Z0-9\s.,!''""\-()]*$/);
 export const validatePassword = helpers.regex(
   /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?_&])[A-Za-z\d@$!%*?_&]*/
 );

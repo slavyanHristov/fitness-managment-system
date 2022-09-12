@@ -2,9 +2,6 @@ import ProtectedAPI from "../axios-instances/ProtectedAPI";
 import API from "../axios-instances/API";
 
 class UserService {
-  isUserExpired() {
-    return ProtectedAPI().get("/user/isUserExpired");
-  }
   getUserData() {
     return ProtectedAPI().get("/user/getUserData");
   }

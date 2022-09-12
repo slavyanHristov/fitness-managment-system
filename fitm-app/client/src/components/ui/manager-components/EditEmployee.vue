@@ -12,35 +12,38 @@ import parsePayload from "@/utils/parsePayload";
 
 const props = defineProps(["itemData"]);
 const emit = defineEmits(["closeModal", "refreshEmployees"]);
-const foundItemData = ref(props.itemData);
-const employeeId = foundItemData.value.id;
+const employeeId = props.itemData.id;
+
+const myVal = computed(() => {
+  return props.itemData;
+});
 
 const errors = ref(null);
-
+console.log(myVal);
 const employeeFields = ref({
   salary: {
     label: "Salary",
     inputId: "salary",
     inputType: "number",
-    value: foundItemData.value.salary,
+    value: props.itemData.salary,
   },
   phone: {
     label: "Phone Number",
     inputId: "phone",
     inputType: "number",
-    value: foundItemData.value.phone,
+    value: props.itemData.phone,
   },
   shift_start: {
     label: "Working Shift Start Time",
     inputId: "shift_start",
     inputType: "text",
-    value: foundItemData.value.shift_start,
+    value: props.itemData.shift_start,
   },
   shift_end: {
     label: "Working Shift End Time",
     inputId: "shift_end",
     inputType: "text",
-    value: foundItemData.value.shift_end,
+    value: props.itemData.shift_end,
   },
 });
 
@@ -113,17 +116,20 @@ onMounted(() => {
 </script>
 <template>
   <div class="bg-primaryBgWhite dark:bg-accentDark">
-    <form class="w-96 bg-inherit" @submit.prevent="editAction">
+    <form
+      class="flex flex-col justify-center gap-2 w-96 bg-inherit"
+      @submit.prevent="editAction"
+    >
       <div
         v-for="(field, index) in employeeFields"
         :key="index"
         class="bg-inherit"
       >
         <div v-if="field.inputType" class="bg-inherit">
+          <p class="text-xs">{{ field.label }}</p>
           <InputField
             v-model:inputContent="field.value"
-            :label-text="field.label"
-            :input-id="field.inputId"
+            :input-id="employeeFields[field.inputId]"
             :input-type="field.inputType"
             :input-errors="errors"
             :vuelidate-errors="v$[field.inputId].$errors"

@@ -10,7 +10,7 @@ router.post(
 );
 
 router.get("/getFoods", controller.getFoods);
-router.post("/bulk-create", controller.testingBulk);
+router.post("/bulk-create", controller.insertMandatoryRecords);
 router.get(
   "/routines",
   [authJwt.verifyToken, authJwt.isInstructor],

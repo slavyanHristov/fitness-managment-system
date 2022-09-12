@@ -31,10 +31,4 @@ class AdminAPI {
   }
 }
 
-// export default {
-//     getManagers() {
-//         return ProtectedAPI().get('/admin/gyms')
-//     }
-// }
-
 export default new AdminAPI();

@@ -5,10 +5,10 @@ defineEmits(["update:sliderValue"]);
 <template>
   <div
     id="range-section"
-    class="flex relative flex-col p-2.5 items-center justify-center w-full h-full rounded-lg bg-primaryWhite dark:bg-testColor"
+    class="flex relative flex-col p-1.5 items-center justify-center w-full h-full rounded-lg bg-primaryWhite dark:bg-testColor"
   >
     <h3
-      class="mb-2.5 absolute top-2.5 font-poppins-light font-light uppercase tracking-wide"
+      class="mb-2.5 absolute top-1.5 font-poppins-light font-light uppercase tracking-wide"
     >
       Filter by {{ props.title }}
     </h3>

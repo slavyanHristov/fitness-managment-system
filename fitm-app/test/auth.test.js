@@ -1,13 +1,13 @@
-const createServer = require("../src/app");
-const dbOperations = require("../src/utils/db-operations");
+const createServer = require("../src/server");
+const dbOperations = require("../src/utils/db-connection");
 const supertest = require("supertest");
 const { adminPayload } = require("./mocks/mockData");
-// const db = require("../src/models");
+const db = require("../src/models");
 const app = createServer();
 
 describe("Test admin registration.", () => {
   beforeAll(async () => {
-    await dbOperations.syncWithDB();
+    await dbOperations.connectToDB();
   });
 
   test("should register an admin", async () => {
